@@ -2,6 +2,9 @@ DEBUG = True
 PREFIX = "http://www.reddit.com/"
 SUFIX = ".json"
 DD = "===================="
+
+USER_AGENT = {'User-agent': 'revi:v0.1 (by /u/pabloxxl)'}
+# TODO add version id
 import requests
 
 
@@ -14,7 +17,7 @@ class request:
             print "request::__init__ : " + self.rId
 
         # TODO add error handling
-        self.r = requests.get(self.rId)
+        self.r = requests.get(self.rId, headers=USER_AGENT)
 
     def getJson(self):
         return self.r.json()
