@@ -9,18 +9,21 @@ import requests
 
 
 class request:
-    def __init__(self, rTxt):
+    def __init__(self, rTxt, rParams=None):
         self.rId = PREFIX + rTxt + SUFIX
         # TODO add cutting prefix end sufix
 
+        if rParams is not None:
+            self.rId += "?"+rParams
+
         if DEBUG:
-            print "request::__init__ : " + self.rId
+            print "request::__init__"
+            print "\t"+self.rId
 
         # TODO add error handling
         self.r = requests.get(self.rId, headers=USER_AGENT)
 
-    def getJson(self):
-        return self.r.json()
+        self.json = self.r.json()
 
     def dump(self):
         data = self.r.json()
