@@ -1,5 +1,9 @@
 import curses
 
+from eval import evalNormal
+from eval import evalCommand
+from eval import cmd
+
 
 class mode:
     """This imitates vi modes, except visual and visual-block"""
@@ -15,18 +19,18 @@ class window:
     def drawMenu(self):
         """Draw menu on the bottom of screen"""
         if self.mode is mode.COMMAND:
-            self.stdscr.addstr(self.maxY-1, 0, ":"+self.cmd)
+            self.stdscr.addstr(self.maxY-1, 0, ":"+self.text)
         elif self.mode is mode.NORMAL:
             # XXX I'm sure there is other method to do it...
             for i in range(self.maxX-1):
-                self.stdscr.addstr(self.maxY-1, i, " "+self.cmd)
+                self.stdscr.addstr(self.maxY-1, i, " ")
 
     def updateAndDraw(self):
         """(Re)draws entire screen"""
         # XXX Error handling???
         self.drawMenu()
 
-    def getChar(self):
+    def getCmd(self):
         """
         Gets key from user input
         In normal mode, keys are parsed right after press
@@ -34,47 +38,47 @@ class window:
             (bool): False if program has to exit (e.g. ZZ or :q)
         """
         if self.mode is mode.NORMAL:
-            self.prevchar = self.char
+            self.prevChar = self.char
             self.char = self.stdscr.getch()
 
-            if self.char is ord(':'):
-                self.mode = mode.COMMAND
-                curses.curs_set(1)
-            elif self.char is ord('j'):
-                # DOWN
-                pass
-            elif self.char is ord('k'):
-                # UP
-                pass
-            elif self.char is ord('Z') and self.prevchar is ord('Z'):
-                self.close()
-                return False
+            self.cmd = evalNormal(chr(self.char), chr(self.prevChar))
+
         elif self.mode is mode.COMMAND:
             self.char = self.stdscr.getch()
             if self.char is ord("\n"):
-                return self.evalCmd()
+                self.cmd = evalCommand(self.text)
+                self.text = ""
             else:
-                self.cmd += chr(self.char)
+                self.text += chr(self.char)
         return True
 
-    def evalCmd(self):
+    def eval(self):
         """
-        Evaluates command fetched from COMMAND mode
+        Evaluates command fetched from any mode
         Returns:
-            (bool): False if program has to exit (:q)
+            (bool): False if program has to exit
         """
-        if self.cmd is 'q':
+
+        if self.cmd is cmd.QUIT:
             self.close()
-            self.cmd = ""
             return False
-        self.cmd = ""
-        curses.curs_set(0)
-        self.mode = mode.NORMAL
+        elif self.cmd is cmd.SWITCH_TO_COMMAND:
+            self.mode = mode.COMMAND
+            self.char = 0
+            self.prevChar = 0
+            curses.curs_set(1)
+
+        elif self.cmd is cmd.SWITCH_TO_NORMAL:
+            self.cmd = ""
+            curses.curs_set(0)
+            self.mode = mode.NORMAL
         return True
 
     def __init__(self):
         self.mode = mode.NORMAL
         self.cmd = ""
+        self.text = ""
+        self.cmd = None
 
         self.stdscr = curses.initscr()
         curses.noecho()
@@ -86,9 +90,6 @@ class window:
         self.char = 0
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
-
-#    def __del__(self):
-#        self.close()
 
     def close(self):
         """
