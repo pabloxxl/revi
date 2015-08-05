@@ -34,6 +34,13 @@ def typeStr(type):
         return ""
 
 
+class link:
+    def __init__(self, title, addr):
+        self.title = title
+        if DEBUG:
+            print "[[link::__init__ "+title+" "+addr+"]]"
+
+
 class listing:
     """
     Representation of reddit listing (list of links in subredit)
@@ -86,4 +93,5 @@ class listing:
 
         self.links = []
         for child in self.json['data']['children']:
-            self.links.append(child['data']['title'])
+            l = link(child['data']['title'], child['data']['permalink'])
+            self.links.append(l)

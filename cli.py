@@ -16,7 +16,7 @@ class window:
     Creating this object will init curses screen and set it to defaults
     """
 
-    def drawMenu(self):
+    def drawFooter(self):
         """Draw menu on the bottom of screen"""
         if self.mode is mode.COMMAND:
             self.stdscr.addstr(self.maxY-1, 0, ":"+self.text)
@@ -28,7 +28,7 @@ class window:
     def updateAndDraw(self):
         """(Re)draws entire screen"""
         # XXX Error handling???
-        self.drawMenu()
+        self.drawFooter()
 
     def getCmd(self):
         """
