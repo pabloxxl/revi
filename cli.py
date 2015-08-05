@@ -3,6 +3,7 @@ import curses
 from eval import evalNormal
 from eval import evalCommand
 from eval import cmd
+from reddit.listing import listing
 
 
 class mode:
@@ -25,9 +26,36 @@ class window:
             for i in range(self.maxX-1):
                 self.stdscr.addstr(self.maxY-1, i, " ")
 
+    def drawListing(self):
+        """Draw list of links"""
+        for i, link in enumerate(self.currObject.links):
+            if i is self.currObject.currLine:
+                for j in range(self.maxX-1):
+                    self.stdscr.addstr(i, j, " ",
+                                       curses.A_REVERSE)
+
+                self.stdscr.addstr(i, 0, link.title.encode('utf-8'),
+                                   curses.A_REVERSE)
+            else:
+                for j in range(self.maxX-1):
+                    self.stdscr.addstr(i, j, " ")
+                self.stdscr.addstr(i, 0, link.title.encode('utf-8'))
+
+    def drawError(self):
+        """Print error text"""
+        self.stdscr.addstr(0, 0, "ERROR")
+        self.stdscr.addstr(0, 1, "Unhandled: "+type(self.currObject).__name__)
+
     def updateAndDraw(self):
         """(Re)draws entire screen"""
         # XXX Error handling???
+
+        currObjectType = type(self.currObject).__name__
+        if currObjectType == "listing":
+            self.drawListing()
+        else:
+            self.drawError()
+
         self.drawFooter()
 
     def getCmd(self):
@@ -62,6 +90,7 @@ class window:
         if self.cmd is cmd.QUIT:
             self.close()
             return False
+
         elif self.cmd is cmd.SWITCH_TO_COMMAND:
             self.mode = mode.COMMAND
             self.char = 0
@@ -72,6 +101,12 @@ class window:
             self.cmd = ""
             curses.curs_set(0)
             self.mode = mode.NORMAL
+
+        elif self.cmd is cmd.DOWN:
+            self.currObject.increment()
+
+        elif self.cmd is cmd.UP:
+            self.currObject.decrement()
         return True
 
     def __init__(self):
@@ -90,6 +125,8 @@ class window:
         self.char = 0
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
+
+        self.currObject = listing("")
 
     def close(self):
         """

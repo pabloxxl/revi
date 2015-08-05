@@ -1,8 +1,9 @@
 DEBUG = True
 from request import request
+from rObject import rObject
 
 
-class user:
+class user(rObject):
     """
     Representation of reddit user
     Args:

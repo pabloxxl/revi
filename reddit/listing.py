@@ -1,6 +1,7 @@
 DEBUG = True
 """Debug printouts in every function"""
 from request import request
+from rObject import rObject
 
 
 class sortType:
@@ -38,10 +39,10 @@ class link:
     def __init__(self, title, addr):
         self.title = title
         if DEBUG:
-            print "[[link::__init__ "+title+" "+addr+"]]"
+            print "[[link::__init__ "+title.encode('utf8')+"]]"
 
 
-class listing:
+class listing(rObject):
     """
     Representation of reddit listing (list of links in subredit)
     Args:
@@ -56,12 +57,15 @@ class listing:
             print "\t"+str(rTypeTxt)
             print "\t"+str(rLimit)
 
+        self.currLine = 0
         rLimitTxt = None
         if rLimit is not 25:
             rLimitTxt = "limit="+str(rLimit)
         # TODO add other options
-
-        rTxt = 'r/'+rName+'/'+rTypeTxt+'/'
+        if rName is "":
+            rTxt = ""
+        else:
+            rTxt = 'r/'+rName+'/'+rTypeTxt+'/'
 
         params = rLimitTxt
         # add other options to params
@@ -72,20 +76,19 @@ class listing:
         self.json = self.r.json
         self.__fetchLinks__()
 
+    def decrement(self):
+        """Decrease current line"""
+        if self.currLine > 0:
+            self.currLine -= 1
+
+    def increment(self):
+        """Increase current line"""
+        if self.currLine < len(self.links) - 1:
+            self.currLine += 1
+
     def dump(self):
         """Dump request object"""
         self.r.dump()
-
-    def getLink(self, nr):
-        """
-        Get N link on link list
-        Args:
-            nr (int): number of requested link
-        Returns:
-            string: link name
-        """
-        # TODO add error handling
-        return self.links[nr]
 
     def __fetchLinks__(self):
         if DEBUG:
