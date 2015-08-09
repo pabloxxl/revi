@@ -1,10 +1,8 @@
 import curses
 
 from eval import cmd
-from reddit.listing import listing
-
-from eval_vim import mode
 from eval_vim import eval_vim
+from reddit.listing import listing
 
 
 class window:
@@ -25,15 +23,6 @@ class window:
 
         self.eval = eval_vim(self.stdscr)
 
-    def drawFooter(self):
-        """Draw menu on the bottom of screen"""
-        if self.eval.mode is mode.COMMAND:
-            self.stdscr.addstr(self.maxY-1, 0, ":"+self.eval.text)
-        elif self.eval.mode is mode.NORMAL:
-            # XXX I'm sure there is other method to do it...
-            for i in range(self.maxX-1):
-                self.stdscr.addstr(self.maxY-1, i, " ")
-
     def drawListing(self):
         """Draw list of links"""
         for i, link in enumerate(self.currObject.links):
@@ -48,6 +37,10 @@ class window:
                 for j in range(self.maxX-1):
                     self.stdscr.addstr(i, j, " ")
                 self.stdscr.addstr(i, 0, link.title.encode('utf-8'))
+
+    def drawEval(self):
+        """Draw object specific to eval objects (key mappings)"""
+        self.eval.draw(self.maxY, self.maxX)
 
     def drawError(self):
         """Print error text"""
@@ -64,7 +57,7 @@ class window:
         else:
             self.drawError()
 
-        self.drawFooter()
+        self.drawEval()
 
     def processCmd(self):
         """
@@ -78,12 +71,10 @@ class window:
             return False
 
         elif self.cmd is cmd.SWITCH_TO_COMMAND:
-            self.eval.mode = mode.COMMAND
             curses.curs_set(1)
 
         elif self.cmd is cmd.SWITCH_TO_NORMAL:
             curses.curs_set(0)
-            self.eval.mode = mode.NORMAL
 
         elif self.cmd is cmd.DOWN:
             self.currObject.increment()

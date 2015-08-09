@@ -1,14 +1,6 @@
 import curses
-
-
-class cmd:
-    """ Commands, returned to cli.py as response for text"""
-    QUIT = 0
-    SWITCH_TO_NORMAL = 1
-    SWITCH_TO_COMMAND = 2
-    SWITCH_TO_INSERT = 3
-    DOWN = 21
-    UP = 22
+from eval import eval
+from eval import cmd
 
 
 class mode:
@@ -16,7 +8,7 @@ class mode:
     NORMAL, COMMAND, INSERT = range(3)
 
 
-class eval_vim(object):
+class eval_vim(eval):
     """
     Responsible for evaluation of user pressed input.
     It tries to emulate VIM key commands.
@@ -42,6 +34,7 @@ class eval_vim(object):
         elif text == "quit":
             return cmd.QUIT
         else:
+            self.mode = mode.NORMAL
             return cmd.SWITCH_TO_NORMAL
 
     def __evalNormal__(self, char, prevChar):
@@ -54,6 +47,7 @@ class eval_vim(object):
             (cmd): command object. None if no command was found
         """
         if char is ':':
+            self.mode = mode.COMMAND
             return cmd.SWITCH_TO_COMMAND
         elif char is 'i':
             return cmd.SWITCH_TO_INSERT
@@ -97,3 +91,24 @@ class eval_vim(object):
         self.char = 0
         self.prevChar = 0
         self.text = ""
+
+    def draw(self, maxY, maxX):
+        """
+        Container method to all draw methods defined in eval class
+        Arguments:
+            maxY(int): window height
+            maxX(int): windows width
+        """
+        self.__drawFooter__(maxY, maxX)
+
+    def __drawFooter__(self, maxY, maxX):
+        """
+        Draw menu on the bottom of screen
+        It is managed here since only eval_vim know about current mode
+        """
+        if self.mode is mode.COMMAND:
+            self.stdscr.addstr(maxY-1, 0, ":"+self.text)
+        elif self.mode is mode.NORMAL:
+            # XXX I'm sure there is other method to do it...
+            for i in range(maxX-1):
+                self.stdscr.addstr(maxY-1, i, " ")
