@@ -4,6 +4,7 @@ class cmd:
     SWITCH_TO_NORMAL = 1
     SWITCH_TO_COMMAND = 2
     SWITCH_TO_INSERT = 3
+    ENTER = 4
     DOWN = 21
     UP = 22
 

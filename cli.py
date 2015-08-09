@@ -3,6 +3,7 @@ import curses
 from eval import cmd
 from eval_vim import eval_vim
 from reddit.listing import listing
+from reddit.comments import comments
 
 
 class window:
@@ -45,7 +46,8 @@ class window:
     def drawError(self):
         """Print error text"""
         self.stdscr.addstr(0, 0, "ERROR")
-        self.stdscr.addstr(0, 1, "Unhandled: "+type(self.currObject).__name__)
+        self.stdscr.addstr(1, 2, "Unhandled rObject type: " +
+                           type(self.currObject).__name__)
 
     def draw(self):
         """(Re)draws entire screen"""
@@ -58,6 +60,9 @@ class window:
             self.drawError()
 
         self.drawEval()
+
+    def clear(self):
+        self.stdscr.clear()
 
     def processCmd(self):
         """
@@ -81,7 +86,15 @@ class window:
 
         elif self.cmd is cmd.UP:
             self.currObject.decrement()
+
+        elif self.cmd is cmd.ENTER:
+            self.followCurrent()
         return True
+
+    def followCurrent(self):
+        """Fetches link  from current cmd and tries to follow it."""
+        self.clear()
+        self.currObject = comments(0)
 
     def run(self):
         """

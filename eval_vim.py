@@ -57,6 +57,8 @@ class eval_vim(eval):
             return cmd.UP
         elif char is 'Z' and prevChar is 'Z':
             return cmd.QUIT
+        elif char == '\n':
+            return cmd.ENTER
         else:
             return None
 
