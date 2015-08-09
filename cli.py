@@ -1,14 +1,10 @@
 import curses
 
-from eval import evalNormal
-from eval import evalCommand
 from eval import cmd
 from reddit.listing import listing
 
-
-class mode:
-    """This imitates vi modes, except visual and visual-block"""
-    NORMAL, COMMAND, INSERT = range(3)
+from eval_vim import mode
+from eval_vim import eval_vim
 
 
 class window:
@@ -16,12 +12,24 @@ class window:
     Representation of main window of client
     Creating this object will init curses screen and set it to defaults
     """
+    def __init__(self):
+        self.stdscr = curses.initscr()
+        curses.noecho()
+        curses.cbreak()
+        self.stdscr.keypad(1)
+        curses.curs_set(0)
+
+        self.maxY, self.maxX = self.stdscr.getmaxyx()
+
+        self.currObject = listing("")
+
+        self.eval = eval_vim(self.stdscr)
 
     def drawFooter(self):
         """Draw menu on the bottom of screen"""
-        if self.mode is mode.COMMAND:
-            self.stdscr.addstr(self.maxY-1, 0, ":"+self.text)
-        elif self.mode is mode.NORMAL:
+        if self.eval.mode is mode.COMMAND:
+            self.stdscr.addstr(self.maxY-1, 0, ":"+self.eval.text)
+        elif self.eval.mode is mode.NORMAL:
             # XXX I'm sure there is other method to do it...
             for i in range(self.maxX-1):
                 self.stdscr.addstr(self.maxY-1, i, " ")
@@ -46,7 +54,7 @@ class window:
         self.stdscr.addstr(0, 0, "ERROR")
         self.stdscr.addstr(0, 1, "Unhandled: "+type(self.currObject).__name__)
 
-    def updateAndDraw(self):
+    def draw(self):
         """(Re)draws entire screen"""
         # XXX Error handling???
 
@@ -58,33 +66,11 @@ class window:
 
         self.drawFooter()
 
-    def getCmd(self):
+    def processCmd(self):
         """
-        Gets key from user input
-        In normal mode, keys are parsed right after press
+        Process cmd returned from eval_* object
         Returns:
-            (bool): False if program has to exit (e.g. ZZ or :q)
-        """
-        if self.mode is mode.NORMAL:
-            self.prevChar = self.char
-            self.char = self.stdscr.getch()
-
-            self.cmd = evalNormal(chr(self.char), chr(self.prevChar))
-
-        elif self.mode is mode.COMMAND:
-            self.char = self.stdscr.getch()
-            if self.char is ord("\n"):
-                self.cmd = evalCommand(self.text)
-                self.text = ""
-            else:
-                self.text += chr(self.char)
-        return True
-
-    def eval(self):
-        """
-        Evaluates command fetched from any mode
-        Returns:
-            (bool): False if program has to exit
+            (bool): False if while loop has to exit. True otherwise
         """
 
         if self.cmd is cmd.QUIT:
@@ -92,15 +78,12 @@ class window:
             return False
 
         elif self.cmd is cmd.SWITCH_TO_COMMAND:
-            self.mode = mode.COMMAND
-            self.char = 0
-            self.prevChar = 0
+            self.eval.mode = mode.COMMAND
             curses.curs_set(1)
 
         elif self.cmd is cmd.SWITCH_TO_NORMAL:
-            self.cmd = ""
             curses.curs_set(0)
-            self.mode = mode.NORMAL
+            self.eval.mode = mode.NORMAL
 
         elif self.cmd is cmd.DOWN:
             self.currObject.increment()
@@ -109,24 +92,17 @@ class window:
             self.currObject.decrement()
         return True
 
-    def __init__(self):
-        self.mode = mode.NORMAL
-        self.cmd = ""
-        self.text = ""
-        self.cmd = None
-
-        self.stdscr = curses.initscr()
-        curses.noecho()
-        curses.cbreak()
-        self.stdscr.keypad(1)
-        curses.curs_set(0)
-
-        self.prevchar = 0
-        self.char = 0
-
-        self.maxY, self.maxX = self.stdscr.getmaxyx()
-
-        self.currObject = listing("")
+    def run(self):
+        """
+        Enter infinite loop, catch keys and process them.
+        If eval object returns something other than None, process cmd object
+        """
+        while(True):
+            self.draw()
+            self.cmd = self.eval.eval()
+            if self.cmd is not None:
+                if not self.processCmd():
+                    break
 
     def close(self):
         """
