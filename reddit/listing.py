@@ -1,4 +1,4 @@
-DEBUG = True
+DEBUG = False
 """Debug printouts in every function"""
 from request import request
 from rObject import rObject

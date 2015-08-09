@@ -1,4 +1,4 @@
-DEBUG = True
+DEBUG = False
 """Debug printouts in every function"""
 PREFIX = "http://www.reddit.com/"
 """Common request prefix"""

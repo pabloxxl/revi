@@ -1,4 +1,4 @@
-DEBUG = True
+DEBUG = False
 from request import request
 from rObject import rObject
 
