@@ -1,4 +1,3 @@
-import curses
 from eval import eval
 from eval import cmd
 
@@ -72,26 +71,26 @@ class eval_vim(eval):
         # Gather input
         if self.mode is mode.NORMAL:
             self.prevChar = self.char
-            self.char = self.stdscr.getch()
+            self.char = self.stdscr.getkey()
 
-            val = self.__evalNormal__(chr(self.char), chr(self.prevChar))
+            val = self.__evalNormal__(self.char, self.prevChar)
             if val is not None:
                 self.reset()
             return val
 
         elif self.mode is mode.COMMAND:
-            self.char = self.stdscr.getch()
-            if self.char is curses.KEY_ENTER or self.char is ord("\n"):
+            self.char = self.stdscr.getkey()
+            if self.char == "\n":
                 val = self.cmd = self.__evalCommand__(self.text)
                 self.reset()
             else:
-                self.text += chr(self.char)
+                self.text += self.char
             return val
 
     def reset(self):
         """Resets all stored values"""
-        self.char = 0
-        self.prevChar = 0
+        self.char = ''
+        self.prevChar = ''
         self.text = ""
 
     def draw(self, maxY, maxX):
@@ -112,5 +111,6 @@ class eval_vim(eval):
             self.stdscr.addstr(maxY-1, 0, ":"+self.text)
         elif self.mode is mode.NORMAL:
             # XXX I'm sure there is other method to do it...
+            # I should add cleared bool also
             for i in range(maxX-1):
                 self.stdscr.addstr(maxY-1, i, " ")
