@@ -86,6 +86,14 @@ class listing(rObject):
         if self.currLine < len(self.links) - 1:
             self.currLine += 1
 
+    def top(self):
+        """Set current line to 0"""
+        self.currLine = 0
+
+    def bottom(self):
+        """Set current line to max"""
+        self.currLine = len(self.links) - 1
+
     def dump(self):
         """Dump request object"""
         self.r.dump()

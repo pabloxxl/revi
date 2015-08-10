@@ -7,3 +7,9 @@ class rObject(object):
 
     def increase(self):
         pass
+
+    def top(self):
+        pass
+
+    def bottom(self):
+        pass

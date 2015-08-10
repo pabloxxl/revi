@@ -32,6 +32,12 @@ class eval_vim(eval):
             return cmd.QUIT
         elif text == "quit":
             return cmd.QUIT
+        elif text == "h":
+            return cmd.HELP
+        elif text == "help":
+            return cmd.HELP
+        elif text == 'license':
+            return cmd.LICENSE
         else:
             self.mode = mode.NORMAL
             return cmd.SWITCH_TO_NORMAL
@@ -45,21 +51,26 @@ class eval_vim(eval):
         Returns:
             (cmd): command object. None if no command was found
         """
+        # I should change it to someting more elegant
         if char is ':':
             self.mode = mode.COMMAND
             return cmd.SWITCH_TO_COMMAND
-        elif char is 'i':
+        if char is 'i':
             return cmd.SWITCH_TO_INSERT
-        elif char is 'j':
+        if char is 'j':
             return cmd.DOWN
-        elif char is 'k':
+        if char is 'k':
             return cmd.UP
-        elif char is 'Z' and prevChar is 'Z':
+        if char is 'Z' and prevChar is 'Z':
             return cmd.QUIT
-        elif char == '\n':
+        if char is 'g' and prevChar is 'g':
+            return cmd.TOP
+        if char is 'G':
+            return cmd.BOTTOM
+        if char == '\n':
             return cmd.ENTER
-        else:
-            return None
+
+        return None
 
     def eval(self):
         """

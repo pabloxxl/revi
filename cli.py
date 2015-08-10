@@ -87,6 +87,12 @@ class window:
         elif self.cmd is cmd.UP:
             self.currObject.decrement()
 
+        elif self.cmd is cmd.TOP:
+            self.currObject.top()
+
+        elif self.cmd is cmd.BOTTOM:
+            self.currObject.bottom()
+
         elif self.cmd is cmd.ENTER:
             self.followCurrent()
         return True
