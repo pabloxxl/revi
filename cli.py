@@ -39,6 +39,16 @@ class window:
                     self.stdscr.addstr(i, j, " ")
                 self.stdscr.addstr(i, 0, link.title.encode('utf-8'))
 
+    def drawComments(self):
+        """Draw list of comments"""
+        for i, comment in enumerate(self.currObject.comments):
+            if i is self.currObject.currComment:
+                self.stdscr.addstr(i, 0, "[+]"+comment.author.encode('utf-8') +
+                                   ": " + comment.text.encode('utf-8'))
+            else:
+                self.stdscr.addstr(i, 0, comment.author.encode('utf-8') +
+                                   ": " + comment.text.encode('utf-8'))
+
     def drawEval(self):
         """Draw object specific to eval objects (key mappings)"""
         self.eval.draw(self.maxY, self.maxX)
@@ -56,6 +66,8 @@ class window:
         currObjectType = type(self.currObject).__name__
         if currObjectType == "listing":
             self.drawListing()
+        elif currObjectType == "comments":
+            self.drawComments()
         else:
             self.drawError()
 
@@ -94,13 +106,16 @@ class window:
             self.currObject.bottom()
 
         elif self.cmd is cmd.ENTER:
-            self.followCurrent()
+            currObjectType = type(self.currObject).__name__
+            if currObjectType == "listing":
+                self.followCurrent()
         return True
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
         self.clear()
-        self.currObject = comments(0)
+        link = self.currObject.getLink(self.currObject.currLine)
+        self.currObject = comments(link.addr)
 
     def run(self):
         """

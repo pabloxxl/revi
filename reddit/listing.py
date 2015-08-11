@@ -2,42 +2,14 @@ DEBUG = False
 """Debug printouts in every function"""
 from request import request
 from rObject import rObject
-
-
-class sortType:
-    """ Enumeration of listing sorting types. Used in listing constructor"""
-    HOT, NEW, RISING, CONTROVERSIAL, TOP, GILDED, WIKI, PROMOTED = range(8)
-
-
-def typeStr(type):
-    """
-    Converts number (represented as class sortType variable) to string
-    Args:
-        type (sortType): sortType member
-    Returns:
-        string : Text representation of type number
-    """
-    if type is sortType.HOT:
-        return "hot"
-    elif type is sortType.RISING:
-        return "rising"
-    elif type is sortType.CONTROVERSIAL:
-        return "controversial"
-    elif type is sortType.TOP:
-        return "top"
-    elif type is sortType.GILDED:
-        return "gilded"
-    elif type is sortType.WIKI:
-        return "wiki"
-    elif type is sortType.PROMOTED:
-        return "promoted"
-    else:
-        return ""
+from rObject import sortType
+from rObject import typeStr
 
 
 class link:
     def __init__(self, title, addr):
         self.title = title
+        self.addr = addr
         if DEBUG:
             print "[[link::__init__ "+title.encode('utf8')+"]]"
 
@@ -63,9 +35,9 @@ class listing(rObject):
             rLimitTxt = "limit="+str(rLimit)
         # TODO add other options
         if rName is "":
-            rTxt = ""
+            rTxt = "/"
         else:
-            rTxt = 'r/'+rName+'/'+rTypeTxt+'/'
+            rTxt = '/r/'+rName+'/'+rTypeTxt+'/'
 
         params = rLimitTxt
         # add other options to params
@@ -75,6 +47,10 @@ class listing(rObject):
 
         self.json = self.r.json
         self.__fetchLinks__()
+
+    def getLink(self, number):
+        """Return link at specifed position"""
+        return self.links[number]
 
     def decrement(self):
         """Decrease current line"""
