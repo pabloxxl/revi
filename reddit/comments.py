@@ -65,7 +65,6 @@ class comments(rObject):
             print "listing::__fetchComments"
 
         self.comments = []
-        print self.json[1]['data']['children']
         for child in self.json[1]['data']['children']:
             if child['kind'] == 't1':
                 c = comment(child['data']['author'], child['data']['body'])

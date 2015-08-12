@@ -20,6 +20,8 @@ class window:
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
 
+        self.drawLoading()
+
         self.currObject = listing("")
 
         self.eval = eval_vim(self.stdscr)
@@ -55,9 +57,16 @@ class window:
 
     def drawError(self):
         """Print error text"""
+        self.clear()
         self.stdscr.addstr(0, 0, "ERROR")
         self.stdscr.addstr(1, 2, "Unhandled rObject type: " +
                            type(self.currObject).__name__)
+
+    def drawLoading(self):
+        """Print loading screen"""
+        self.clear()
+        self.stdscr.addstr(self.maxY/2, self.maxX/2, "PLEASE STAND BY")
+        self.stdscr.refresh()
 
     def draw(self):
         """(Re)draws entire screen"""
@@ -72,6 +81,7 @@ class window:
             self.drawError()
 
         self.drawEval()
+        self.stdscr.refresh()
 
     def clear(self):
         self.stdscr.clear()
@@ -108,14 +118,15 @@ class window:
         elif self.cmd is cmd.ENTER:
             currObjectType = type(self.currObject).__name__
             if currObjectType == "listing":
+                self.drawLoading()
                 self.followCurrent()
         return True
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
-        self.clear()
         link = self.currObject.getLink(self.currObject.currLine)
         self.currObject = comments(link.addr)
+        self.clear()
 
     def run(self):
         """
