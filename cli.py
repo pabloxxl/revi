@@ -23,7 +23,7 @@ class window:
         self.drawLoading()
 
         self.currObject = listing("")
-
+        self.clear()
         self.eval = eval_vim(self.stdscr)
 
     def drawListing(self):
@@ -44,6 +44,8 @@ class window:
     def drawComments(self):
         """Draw list of comments"""
         for i, comment in enumerate(self.currObject.comments):
+            if i > self.maxY-10:
+                break
             if i is self.currObject.currComment:
                 self.stdscr.addstr(i, 0, "[+]"+comment.author.encode('utf-8') +
                                    ": " + comment.text.encode('utf-8'))
