@@ -1,17 +1,16 @@
-DEBUG = False
-"""Debug printouts in every function"""
 from request import request
 from rObject import rObject
 from rObject import sortType
 from rObject import typeStr
+
+import logging as lg
 
 
 class comment:
     def __init__(self, author, text):
         self.author = author
         self.text = text
-        if DEBUG:
-            print "[[link::__init__ " + author + " " + text[:25]
+        # lg.debug("link::__init__ " + author + " " + text[:25])
 
 
 class comments(rObject):
@@ -24,11 +23,10 @@ class comments(rObject):
     """
     def __init__(self, rLink, rType=sortType.HOT, rLimit=25):
         rTypeTxt = typeStr(rType)
-        if DEBUG:
-            print "comments::__init__"
-            print "\t"+str(rLink)
-            print "\t"+str(rTypeTxt)
-            print "\t"+str(rLimit)
+        lg.debug("comments::__init__ " +
+                 rLink + "" +
+                 rTypeTxt + " " +
+                 str(rLimit))
 
         self.currComment = 0
 
@@ -41,28 +39,50 @@ class comments(rObject):
     def decrement(self):
         """Decrease current comment"""
         if self.currComment > 0:
+            lg.debug("comments::decrement %d -> %d",
+                     self.currComment,
+                     self.currComment - 1)
             self.currComment -= 1
+        else:
+            lg.debug("comments::decrement %d -> MIN",
+                     self.currComment)
 
     def increment(self):
-        """Increase current comment"""
+        """Increase current line"""
         if self.currComment < len(self.comments) - 1:
+            lg.debug("comments::increment %d -> %d",
+                     self.currComment,
+                     self.currComment + 1)
+            self.currComment += 1
+        else:
+            lg.debug("comments::increment %d -> MAX",
+                     self.currComment)
             self.currComment += 1
 
     def top(self):
-        """Set current comment to 0"""
+        """Set current line to 0"""
+        lg.debug("comments::top %d -> %d",
+                 self.currComment,
+                 0)
+
         self.currComment = 0
 
     def bottom(self):
-        """Set current comment to max"""
+        """Set current line to max"""
+
+        lg.debug("comments::bottom %d -> %d",
+                 self.currComment,
+                 len(self.comments) - 1)
+
         self.currComment = len(self.comments) - 1
 
     def dump(self):
         """Dump request object"""
+        lg.debug("comments::dump")
         self.r.dump()
 
     def __fetchComments__(self):
-        if DEBUG:
-            print "listing::__fetchComments"
+        lg.debug("comments::__fetchComments")
 
         self.comments = []
         for child in self.json[1]['data']['children']:

@@ -1,17 +1,16 @@
-DEBUG = False
-"""Debug printouts in every function"""
 from request import request
 from rObject import rObject
 from rObject import sortType
 from rObject import typeStr
+
+import logging as lg
 
 
 class link:
     def __init__(self, title, addr):
         self.title = title
         self.addr = addr
-        if DEBUG:
-            print "[[link::__init__ "+title.encode('utf8')+"]]"
+        # lg.debug("link::__init__ "+title[:10].encode('utf8')+"...")
 
 
 class listing(rObject):
@@ -24,10 +23,9 @@ class listing(rObject):
     """
     def __init__(self, rName, rType=sortType.HOT, rLimit=25):
         rTypeTxt = typeStr(rType)
-        if DEBUG:
-            print "listing::__init__"
-            print "\t"+str(rTypeTxt)
-            print "\t"+str(rLimit)
+        lg.debug("listing::__init__ " +
+                 rTypeTxt + " " +
+                 str(rLimit))
 
         self.currLine = 0
         rLimitTxt = None
@@ -50,33 +48,57 @@ class listing(rObject):
 
     def getLink(self, number):
         """Return link at specifed position"""
+        lg.debug("listing::getLink " +
+                 str(number))
         return self.links[number]
 
     def decrement(self):
         """Decrease current line"""
         if self.currLine > 0:
+            lg.debug("listing::decrement %d -> %d",
+                     self.currLine,
+                     self.currLine - 1)
             self.currLine -= 1
+        else:
+            lg.debug("listing::decrement %d -> MIN",
+                     self.currLine)
 
     def increment(self):
         """Increase current line"""
         if self.currLine < len(self.links) - 1:
+            lg.debug("listing::increment %d -> %d",
+                     self.currLine,
+                     self.currLine + 1)
+            self.currLine += 1
+        else:
+            lg.debug("listing::increment %d -> MAX",
+                     self.currLine)
             self.currLine += 1
 
     def top(self):
         """Set current line to 0"""
+        lg.debug("listing::top %d -> %d",
+                 self.currLine,
+                 0)
+
         self.currLine = 0
 
     def bottom(self):
         """Set current line to max"""
+
+        lg.debug("listing::bottom %d -> %d",
+                 self.currLine,
+                 len(self.links) - 1)
+
         self.currLine = len(self.links) - 1
 
     def dump(self):
         """Dump request object"""
+        lg.debug("listing::dump")
         self.r.dump()
 
     def __fetchLinks__(self):
-        if DEBUG:
-            print "listing::__fetchLinks"
+        lg.debug("listing::__fetchLinks")
 
         self.links = []
         for child in self.json['data']['children']:

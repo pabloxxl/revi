@@ -2,8 +2,11 @@
 
 from cli import window
 import argparse
+import time
+import logging
 
 VERSION = "0.1"
+LOGNAME = "revi.log"
 
 # Parse program arguments
 parser = argparse.ArgumentParser(description="revi v"+VERSION,
@@ -18,6 +21,22 @@ parser.add_argument("-d", "--debug",
                     action="store_true")
 
 args = parser.parse_args()
+DEBUG = None
+if args.debug:
+    logging.basicConfig(format='%(levelname)s:%(message)s',
+                        level=logging.DEBUG,
+                        filename=LOGNAME)
+
+else:
+    logging.basicConfig(format='%(levelname)s:%(message)s',
+                        level=logging.WARNING,
+                        filename=LOGNAME)
+
+logging.getLogger("requests").setLevel(logging.WARNING)
+
+logging.info("revi v"+VERSION)
+logging.info(time.strftime("Log started at %H:%M:%S (%d.%m.%Y)"))
+
 
 # Run main loop
 if args.cli:

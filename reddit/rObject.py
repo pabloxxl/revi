@@ -1,3 +1,6 @@
+import logging as lg
+
+
 class sortType:
     """ Enumeration of listing sorting types. Used in listing constructor"""
     HOT, NEW, RISING, CONTROVERSIAL, TOP, GILDED, WIKI, PROMOTED = range(8)
@@ -34,13 +37,13 @@ class rObject(object):
     Common ancestor for all reddit objects
     """
     def decrease(self):
-        pass
+        lg.debug("rObject::decrease")
 
     def increase(self):
-        pass
+        lg.debug("rObject::increase")
 
     def top(self):
-        pass
+        lg.debug("rObject::top")
 
     def bottom(self):
-        pass
+        lg.debug("rObject::bottom")

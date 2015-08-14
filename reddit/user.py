@@ -1,6 +1,7 @@
-DEBUG = False
 from request import request
 from rObject import rObject
+
+import logging as lg
 
 
 class user(rObject):
@@ -10,13 +11,13 @@ class user(rObject):
         uName (string): user name
     """
     def __init__(self, uName):
-        if DEBUG:
-            print "user::__init__"
-            print "\t"+uName
+        lg.debug("user::__init__ " +
+                 uName)
 
         rTxtOverview = 'user/'+uName+'/overview/'
         self.rOverview = request(rTxtOverview)
 
     def dump(self):
         """Dump request object"""
+        lg.debug("user::dump")
         self.rOverview.dump()
