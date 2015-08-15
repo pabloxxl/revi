@@ -1,3 +1,6 @@
+import logging as lg
+
+
 class cmd:
     """ Commands, returned to cli.py as response for text"""
     QUIT = 0
@@ -22,4 +25,4 @@ class eval(object):
             maxY(int): window height
             maxX(int): windows width
         """
-        pass
+        lg.debug("eval::draw")

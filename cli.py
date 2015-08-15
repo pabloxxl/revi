@@ -5,6 +5,8 @@ from eval_vim import eval_vim
 from reddit.listing import listing
 from reddit.comments import comments
 
+import logging as lg
+
 
 class window:
     """
@@ -12,6 +14,7 @@ class window:
     Creating this object will init curses screen and set it to defaults
     """
     def __init__(self):
+        lg.debug("cli::__init__")
         self.stdscr = curses.initscr()
         curses.noecho()
         curses.cbreak()
@@ -28,6 +31,7 @@ class window:
 
     def drawListing(self):
         """Draw list of links"""
+        lg.debug("cli::drawListing")
         for i, link in enumerate(self.currObject.links):
             if i is self.currObject.currLine:
                 for j in range(self.maxX-1):
@@ -43,8 +47,12 @@ class window:
 
     def drawComments(self):
         """Draw list of comments"""
+        lg.debug("cli::drawComments")
         for i, comment in enumerate(self.currObject.comments):
             if i > self.maxY-10:
+                lg.warning("Reached end of screen with comments " +
+                           "left to draw (" +
+                           str(len(self.currObject.comments)-i) + ")")
                 break
             if i is self.currObject.currComment:
                 self.stdscr.addstr(i, 0, "[+]"+comment.author.encode('utf-8') +
@@ -55,10 +63,12 @@ class window:
 
     def drawEval(self):
         """Draw object specific to eval objects (key mappings)"""
+        lg.debug("cli::drawEval")
         self.eval.draw(self.maxY, self.maxX)
 
     def drawError(self):
         """Print error text"""
+        lg.debug("cli::drawError")
         self.clear()
         self.stdscr.addstr(0, 0, "ERROR")
         self.stdscr.addstr(1, 2, "Unhandled rObject type: " +
@@ -66,12 +76,14 @@ class window:
 
     def drawLoading(self):
         """Print loading screen"""
+        lg.debug("cli::drawLoading")
         self.clear()
         self.stdscr.addstr(self.maxY/2, self.maxX/2, "PLEASE STAND BY")
         self.stdscr.refresh()
 
     def draw(self):
         """(Re)draws entire screen"""
+        lg.debug("cli::draw")
         # XXX Error handling???
 
         currObjectType = type(self.currObject).__name__
@@ -80,12 +92,16 @@ class window:
         elif currObjectType == "comments":
             self.drawComments()
         else:
+            lg.warning("Tried to draw non-existing object Type: ",
+                       currObjectType)
             self.drawError()
 
         self.drawEval()
         self.stdscr.refresh()
 
     def clear(self):
+        """Clear entire screen"""
+        lg.debug("cli::clear")
         self.stdscr.clear()
 
     def processCmd(self):
@@ -94,6 +110,8 @@ class window:
         Returns:
             (bool): False if while loop has to exit. True otherwise
         """
+        lg.debug("cli::processCmd " +
+                 str(self.cmd))
 
         if self.cmd is cmd.QUIT:
             self.close()
@@ -126,6 +144,8 @@ class window:
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
+        lg.debug("cli::followCurrent " +
+                 str(self.currObject.currLine))
         link = self.currObject.getLink(self.currObject.currLine)
         self.currObject = comments(link.addr)
         self.clear()
@@ -135,6 +155,7 @@ class window:
         Enter infinite loop, catch keys and process them.
         If eval object returns something other than None, process cmd object
         """
+        lg.debug("cli::run")
         while(True):
             self.draw()
             self.cmd = self.eval.eval()
@@ -147,6 +168,7 @@ class window:
         Clean-up and close curses window.
         This method will be automaticaly called by class destructor
         """
+        lg.debug("cli::close")
         curses.nocbreak()
         curses.echo()
         self.stdscr.keypad(0)
