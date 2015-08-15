@@ -30,7 +30,13 @@ class comments(rObject):
 
         self.currComment = 0
 
-        self.r = request(rLink, None)
+        rLimitTxt = None
+        if rLimit is not 25:
+            rLimitTxt = "limit="+str(rLimit)
+
+        params = rLimitTxt
+
+        self.r = request(rLink, params)
         # I should check if request went well
 
         self.json = self.r.json
@@ -57,7 +63,6 @@ class comments(rObject):
         else:
             lg.debug("comments::increment %d -> MAX",
                      self.currComment)
-            self.currComment += 1
 
     def top(self):
         """Set current line to 0"""
@@ -89,3 +94,4 @@ class comments(rObject):
             if child['kind'] == 't1':
                 c = comment(child['data']['author'], child['data']['body'])
                 self.comments.append(c)
+        lg.debug("Fetched " + str(len(self.comments)) + " comments")

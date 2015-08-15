@@ -23,9 +23,14 @@ class window:
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
 
+        self.MAX_LIST_ITEMS = self.maxY - 2
+
+        lg.debug("Maximum number for items is " +
+                 str(self.MAX_LIST_ITEMS))
+
         self.drawLoading()
 
-        self.currObject = listing("")
+        self.currObject = listing("", rLimit=self.MAX_LIST_ITEMS)
         self.clear()
         self.eval = eval_vim(self.stdscr)
 
@@ -33,6 +38,11 @@ class window:
         """Draw list of links"""
         lg.debug("cli::drawListing")
         for i, link in enumerate(self.currObject.links):
+            if i > self.MAX_LIST_ITEMS:
+                lg.warning("Reached end of screen with links " +
+                           "left to draw (" +
+                           str(len(self.currObject.links)-i) + ")")
+                break
             if i is self.currObject.currLine:
                 for j in range(self.maxX-1):
                     self.stdscr.addstr(i, j, " ",
@@ -49,7 +59,7 @@ class window:
         """Draw list of comments"""
         lg.debug("cli::drawComments")
         for i, comment in enumerate(self.currObject.comments):
-            if i > self.maxY-10:
+            if i > self.MAX_LIST_ITEMS:
                 lg.warning("Reached end of screen with comments " +
                            "left to draw (" +
                            str(len(self.currObject.comments)-i) + ")")
@@ -147,7 +157,7 @@ class window:
         lg.debug("cli::followCurrent " +
                  str(self.currObject.currLine))
         link = self.currObject.getLink(self.currObject.currLine)
-        self.currObject = comments(link.addr)
+        self.currObject = comments(link.addr, rLimit=self.MAX_LIST_ITEMS)
         self.clear()
 
     def run(self):
