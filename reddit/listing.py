@@ -73,7 +73,6 @@ class listing(rObject):
         else:
             lg.debug("listing::increment %d -> MAX",
                      self.currLine)
-            self.currLine += 1
 
     def top(self):
         """Set current line to 0"""

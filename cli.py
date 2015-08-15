@@ -23,7 +23,7 @@ class window:
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
 
-        self.MAX_LIST_ITEMS = self.maxY - 2
+        self.MAX_LIST_ITEMS = self.maxY - 3
 
         lg.debug("Maximum number for items is " +
                  str(self.MAX_LIST_ITEMS))
@@ -37,13 +37,15 @@ class window:
     def drawListing(self):
         """Draw list of links"""
         lg.debug("cli::drawListing")
-        for i, link in enumerate(self.currObject.links):
+        # Should change to subredit title
+        self.stdscr.addstr(0, 0, "FRONTPAGE:")
+        for i, link in enumerate(self.currObject.links, start=1):
             if i > self.MAX_LIST_ITEMS:
                 lg.warning("Reached end of screen with links " +
                            "left to draw (" +
                            str(len(self.currObject.links)-i) + ")")
                 break
-            if i is self.currObject.currLine:
+            if i is self.currObject.currLine+1:
                 for j in range(self.maxX-1):
                     self.stdscr.addstr(i, j, " ",
                                        curses.A_REVERSE)
@@ -58,13 +60,15 @@ class window:
     def drawComments(self):
         """Draw list of comments"""
         lg.debug("cli::drawComments")
-        for i, comment in enumerate(self.currObject.comments):
+
+        self.stdscr.addstr(0, 0, "COMMENTS:")
+        for i, comment in enumerate(self.currObject.comments, start=1):
             if i > self.MAX_LIST_ITEMS:
                 lg.warning("Reached end of screen with comments " +
                            "left to draw (" +
                            str(len(self.currObject.comments)-i) + ")")
                 break
-            if i is self.currObject.currComment:
+            if i is self.currObject.currComment+1:
                 self.stdscr.addstr(i, 0, "[+]"+comment.author.encode('utf-8') +
                                    ": " + comment.text.encode('utf-8'))
             else:
