@@ -4,7 +4,8 @@ from eval import cmd
 from eval_vim import eval_vim
 from reddit.listing import listing
 from reddit.comments import comments
-
+from help import help
+from globals import mode
 import logging as lg
 
 
@@ -27,12 +28,19 @@ class window:
 
         lg.debug("Maximum number for items is " +
                  str(self.MAX_LIST_ITEMS))
+        self.MODE = mode.VIM
 
         self.drawLoading()
 
         self.currObject = listing("", rLimit=self.MAX_LIST_ITEMS)
         self.clear()
-        self.eval = eval_vim(self.stdscr)
+        if self.MODE is mode.VIM:
+            self.eval = eval_vim(self.stdscr)
+        else:
+            # self.eval = eval_emacs(self.stdscr)
+            pass
+
+        self.help = help()
 
     def drawListing(self):
         """Draw list of links"""
@@ -95,6 +103,27 @@ class window:
         self.stdscr.addstr(self.maxY/2, self.maxX/2, "PLEASE STAND BY")
         self.stdscr.refresh()
 
+    def drawHelp(self):
+        """Print help screen dependant on mode"""
+        lg.debug("cli::drawLoading with mode: "+str(self.MODE))
+
+        if self.MODE is mode.VIM:
+            self.stdscr.addstr(0, 0, "HELP:")
+            self.stdscr.addstr(2, 0, "VIM command mode bindings:",
+                               curses.A_BOLD)
+            line = 3
+            for key, val in self.help.vim_command:
+                self.stdscr.addstr(line, 0, key + " : " + val)
+                line += 1
+
+            line += 1
+            self.stdscr.addstr(line, 0, "VIM normal mode bindings:",
+                               curses.A_BOLD)
+            line += 1
+            for item in self.help.vim_normal:
+                self.stdscr.addstr(line, 0, item[0] + " : " + item[1])
+                line += 1
+
     def draw(self):
         """(Re)draws entire screen"""
         lg.debug("cli::draw")
@@ -105,6 +134,8 @@ class window:
             self.drawListing()
         elif currObjectType == "comments":
             self.drawComments()
+        elif currObjectType == "help":
+            self.drawHelp()
         else:
             lg.warning("Tried to draw non-existing object Type: ",
                        currObjectType)
@@ -136,6 +167,12 @@ class window:
 
         elif self.cmd is cmd.SWITCH_TO_NORMAL:
             curses.curs_set(0)
+            # I should move it to eval_vim
+
+        elif self.cmd is cmd.HELP:
+            curses.curs_set(0)
+            self.clear()
+            self.currObject = help()
 
         elif self.cmd is cmd.DOWN:
             self.currObject.increment()

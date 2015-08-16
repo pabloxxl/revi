@@ -37,8 +37,10 @@ class eval_vim(eval):
         elif text == "quit":
             return cmd.QUIT
         elif text == "h":
+            self.mode = mode.NORMAL
             return cmd.HELP
         elif text == "help":
+            self.mode = mode.NORMAL
             return cmd.HELP
         elif text == 'license':
             return cmd.LICENSE
