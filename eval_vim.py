@@ -42,6 +42,8 @@ class eval_vim(eval):
             return cmd.HELP
         elif text == 'license':
             return cmd.LICENSE
+        elif text == 'history':
+            return cmd.HISTORY
         else:
             self.mode = mode.NORMAL
             return cmd.SWITCH_TO_NORMAL
@@ -68,6 +70,14 @@ class eval_vim(eval):
             return cmd.DOWN
         if char is 'k':
             return cmd.UP
+        if char is 'b':
+            return cmd.BACK
+        if char is 'w':
+            return cmd.FORWARD
+        if char is 'B':
+            return cmd.BACK_ABSOLUTE
+        if char is 'W':
+            return cmd.FORWARD_ABSOLUTE
         if char is 'Z' and prevChar is 'Z':
             return cmd.QUIT
         if char is 'g' and prevChar is 'g':

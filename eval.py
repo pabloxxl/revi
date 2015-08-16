@@ -12,8 +12,13 @@ class cmd:
     UP = 21
     TOP = 22
     BOTTOM = 23
+    BACK = 24
+    FORWARD = 25
+    BACK_ABSOLUTE = 26
+    FORWARD_ABSOLUTE = 27
     HELP = 30
-    LICENSE = 31
+    HISTORY = 31
+    LICENSE = 32
 
 
 class eval(object):
