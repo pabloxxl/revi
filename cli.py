@@ -68,20 +68,17 @@ class window:
     def drawComments(self):
         """Draw list of comments"""
         lg.debug("cli::drawComments")
+        self.clear()  # I should consider not clearing here
 
-        self.stdscr.addstr(0, 0, "COMMENTS:")
-        for i, comment in enumerate(self.currObject.comments, start=1):
-            if i > self.MAX_LIST_ITEMS:
-                lg.warning("Reached end of screen with comments " +
-                           "left to draw (" +
-                           str(len(self.currObject.comments)-i) + ")")
-                break
-            if i is self.currObject.currComment+1:
-                self.stdscr.addstr(i, 0, "[+]"+comment.author.encode('utf-8') +
-                                   ": " + comment.text.encode('utf-8'))
-            else:
-                self.stdscr.addstr(i, 0, comment.author.encode('utf-8') +
-                                   ": " + comment.text.encode('utf-8'))
+        self.stdscr.addstr(0, 0, "COMMENTS(" +
+                           str(self.currObject.getCurrentCommentNumber()) +
+                           "/" + str(self.currObject.getNumberOfComments()) +
+                           "):")
+        comment = self.currObject.getCurrentComment()
+        self.stdscr.addstr(2, 0, comment.author.encode('utf-8') +
+                           ": ", curses.A_BOLD)
+
+        self.stdscr.addstr(3, 0, comment.text.encode('utf-8'))
 
     def drawEval(self):
         """Draw object specific to eval objects (key mappings)"""
@@ -198,7 +195,7 @@ class window:
         lg.debug("cli::followCurrent " +
                  str(self.currObject.currLine))
         link = self.currObject.getLink(self.currObject.currLine)
-        self.currObject = comments(link.addr, rLimit=self.MAX_LIST_ITEMS)
+        self.currObject = comments(link.addr, rLimit=100)
         self.clear()
 
     def run(self):

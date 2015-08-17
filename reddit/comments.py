@@ -81,6 +81,18 @@ class comments(rObject):
 
         self.currComment = len(self.comments) - 1
 
+    def getCurrentComment(self):
+        """Get currently selected comment"""
+        return self.comments[self.currComment]
+
+    def getCurrentCommentNumber(self):
+        """Return number of current comment"""
+        return self.currComment + 1
+
+    def getNumberOfComments(self):
+        """Get lenght of comment list"""
+        return len(self.comments)
+
     def dump(self):
         """Dump request object"""
         lg.debug("comments::dump")
