@@ -3,6 +3,31 @@ from eval import cmd
 import logging as lg
 
 
+mapping_normal = {
+    ":": cmd.SWITCH_TO_COMMAND,
+    "i": cmd.SWITCH_TO_INSERT,
+    "j": cmd.DOWN,
+    "k": cmd.UP,
+    "b": cmd.BACK,
+    "w": cmd.FORWARD,
+    "B": cmd.BACK_ABSOLUTE,
+    "W": cmd.FORWARD_ABSOLUTE,
+    "G": cmd.BOTTOM,
+    "ZZ": cmd.QUIT,
+    "gg": cmd.TOP,
+    "\n": cmd.ENTER
+}
+
+mapping_command = {
+    "q": cmd.QUIT,
+    "h": cmd.HELP,
+    "quit": cmd.QUIT,
+    "help": cmd.HELP,
+    "license": cmd.LICENSE,
+    "history": cmd.HISTORY
+}
+
+
 class mode:
     """This imitates vi modes, except visual and visual-block"""
     NORMAL, COMMAND, INSERT = range(3)
@@ -32,23 +57,9 @@ class eval_vim(eval):
         """
         lg.debug("eval_vim::__evalCommand__ " +
                  text)
-        if text == "q":
-            return cmd.QUIT
-        elif text == "quit":
-            return cmd.QUIT
-        elif text == "h":
-            self.mode = mode.NORMAL
-            return cmd.HELP
-        elif text == "help":
-            self.mode = mode.NORMAL
-            return cmd.HELP
-        elif text == 'license':
-            return cmd.LICENSE
-        elif text == 'history':
-            return cmd.HISTORY
-        else:
-            self.mode = mode.NORMAL
-            return cmd.SWITCH_TO_NORMAL
+
+        self.mode = mode.NORMAL
+        return mapping_command.get(text, cmd.SWITCH_TO_NORMAL)
 
     def __evalNormal__(self, char, prevChar):
         """
@@ -60,36 +71,15 @@ class eval_vim(eval):
             (cmd): command object. None if no command was found
         """
         lg.debug("eval_vim::__evalNormal__ " +
-                 char + prevChar)
+                 prevChar + char)
 
-        # I should change it to someting more elegant
         if char is ':':
             self.mode = mode.COMMAND
-            return cmd.SWITCH_TO_COMMAND
-        if char is 'i':
-            return cmd.SWITCH_TO_INSERT
-        if char is 'j':
-            return cmd.DOWN
-        if char is 'k':
-            return cmd.UP
-        if char is 'b':
-            return cmd.BACK
-        if char is 'w':
-            return cmd.FORWARD
-        if char is 'B':
-            return cmd.BACK_ABSOLUTE
-        if char is 'W':
-            return cmd.FORWARD_ABSOLUTE
-        if char is 'Z' and prevChar is 'Z':
-            return cmd.QUIT
-        if char is 'g' and prevChar is 'g':
-            return cmd.TOP
-        if char is 'G':
-            return cmd.BOTTOM
-        if char == '\n':
-            return cmd.ENTER
 
-        return None
+        cmd = mapping_normal.get(char, None)
+        if cmd is None:
+            cmd = mapping_normal.get(prevChar + char)
+        return cmd
 
     def eval(self):
         """
