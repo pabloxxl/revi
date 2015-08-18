@@ -159,15 +159,7 @@ class window:
             self.close()
             return False
 
-        elif self.cmd is cmd.SWITCH_TO_COMMAND:
-            curses.curs_set(1)
-
-        elif self.cmd is cmd.SWITCH_TO_NORMAL:
-            curses.curs_set(0)
-            # I should move it to eval_vim
-
         elif self.cmd is cmd.HELP:
-            curses.curs_set(0)
             self.clear()
             self.currObject = help()
 
