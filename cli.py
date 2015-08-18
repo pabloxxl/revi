@@ -155,32 +155,36 @@ class window:
         lg.debug("cli::processCmd " +
                  str(self.cmd))
 
+        # This should be more global. Dunno how to do that.
+        mapping_cli = {
+            cmd.QUIT: self.close,
+            cmd.HELP: self.performHelp,
+            cmd.DOWN: self.currObject.increment,
+            cmd.UP: self.currObject.decrement,
+            cmd.TOP: self.currObject.top,
+            cmd.BOTTOM: self.currObject.bottom,
+            cmd.ENTER: self.performEnter
+        }
+
+        fun = mapping_cli.get(self.cmd, None)
+        if fun is not None:
+            fun()
+
         if self.cmd is cmd.QUIT:
-            self.close()
             return False
-
-        elif self.cmd is cmd.HELP:
-            self.clear()
-            self.currObject = help()
-
-        elif self.cmd is cmd.DOWN:
-            self.currObject.increment()
-
-        elif self.cmd is cmd.UP:
-            self.currObject.decrement()
-
-        elif self.cmd is cmd.TOP:
-            self.currObject.top()
-
-        elif self.cmd is cmd.BOTTOM:
-            self.currObject.bottom()
-
-        elif self.cmd is cmd.ENTER:
-            currObjectType = type(self.currObject).__name__
-            if currObjectType == "listing":
-                self.drawLoading()
-                self.followCurrent()
         return True
+
+    def performEnter(self):
+        """Interpret ENTER key"""
+        currObjectType = type(self.currObject).__name__
+        if currObjectType == "listing":
+            self.drawLoading()
+            self.followCurrent()
+
+    def performHelp(self):
+        """Enter help"""
+        self.clear()
+        self.currObject = help()
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
@@ -212,5 +216,4 @@ class window:
         curses.nocbreak()
         curses.echo()
         self.stdscr.keypad(0)
-
         curses.endwin()
