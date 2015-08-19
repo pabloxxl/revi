@@ -43,8 +43,12 @@ class listing(rObject):
         self.r = request(rTxt, params)
         # I should check if request went well
 
-        self.json = self.r.json
-        self.__fetchLinks__()
+        self.ok = self.r.ok
+        self.status = self.r.status
+
+        if self.ok:
+            self.json = self.r.json
+            self.__fetchLinks__()
 
     def getLink(self, number):
         """Return link at specifed position"""

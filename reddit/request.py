@@ -33,22 +33,33 @@ class request:
         # TODO add error handling
         self.r = requests.get(self.rId, headers=USER_AGENT)
 
-        self.json = self.r.json()
+        self.status = self.r.status_code
+        if self.status is 100:  # TODO Add more codes
+            self.ok = True
+        else:
+            self.ok = False
+            lg.warning("Request returned " + str(self.status))
+
+        if self.ok:
+            self.json = self.r.json()
 
     def dump(self):
         """Dump request and all children"""
         lg.debug("request::dump")
 
-        data = self.r.json()
-        lg.debug("Dumping: " + self.rId)
-        lg.debug(DD)
-        lg.debug(data)
-        lg.debug(DD)
+        if self.ok:
+            data = self.r.json()
+            lg.debug("Dumping: " + self.rId)
+            lg.debug(DD)
+            lg.debug(data)
+            lg.debug(DD)
 
-        if "data" in data:
-            for child in data['data']['children']:
-                lg.debug(child)
+            if "data" in data:
+                for child in data['data']['children']:
+                    lg.debug(child)
+            else:
+                lg.debug("Failed to dump data")
+
+            lg.debug(DD)
         else:
-            lg.debug("Failed to dump data")
-
-        lg.debug(DD)
+            lg.debug("Return code:" + str(self.status))

@@ -4,6 +4,7 @@ from eval import cmd
 from eval_vim import eval_vim
 from reddit.listing import listing
 from reddit.comments import comments
+from reddit.error import error
 from help import help
 from globals import mode
 import logging as lg
@@ -32,8 +33,13 @@ class window:
 
         self.drawLoading()
 
-        self.currObject = listing("", rLimit=self.MAX_LIST_ITEMS)
-        self.clear()
+        l = listing("", rLimit=self.MAX_LIST_ITEMS)
+        if l.ok:
+            self.currObject = l
+            self.clear()
+        else:
+            self.currObject = error(l.status)
+
         if self.MODE is mode.VIM:
             self.eval = eval_vim(self.stdscr)
         else:
@@ -90,8 +96,7 @@ class window:
         lg.debug("cli::drawError")
         self.clear()
         self.stdscr.addstr(0, 0, "ERROR")
-        self.stdscr.addstr(1, 2, "Unhandled rObject type: " +
-                           type(self.currObject).__name__)
+        self.stdscr.addstr(1, 0, self.currObject.describe())
 
     def drawLoading(self):
         """Print loading screen"""
@@ -133,9 +138,7 @@ class window:
             self.drawComments()
         elif currObjectType == "help":
             self.drawHelp()
-        else:
-            lg.warning("Tried to draw non-existing object Type: ",
-                       currObjectType)
+        elif currObjectType == "error":
             self.drawError()
 
         self.drawEval()
@@ -191,7 +194,13 @@ class window:
         lg.debug("cli::followCurrent " +
                  str(self.currObject.currLine))
         link = self.currObject.getLink(self.currObject.currLine)
-        self.currObject = comments(link.addr, rLimit=100)
+
+        c = comments(link.addr, rLimit=100)
+        if c.ok:
+            self.currObject = comments(link.addr, rLimit=100)
+        else:
+            self.currObject = error(c.status)
+
         self.clear()
 
     def run(self):

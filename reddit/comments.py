@@ -37,10 +37,13 @@ class comments(rObject):
         params = rLimitTxt
 
         self.r = request(rLink, params)
-        # I should check if request went well
 
-        self.json = self.r.json
-        self.__fetchComments__()
+        self.ok = self.r.ok
+        self.status = self.r.status
+
+        if self.ok:
+            self.json = self.r.json
+            self.__fetchComments__()
 
     def decrement(self):
         """Decrease current comment"""
