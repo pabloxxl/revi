@@ -30,11 +30,14 @@ class request:
         lg.debug("request::__init__ " +
                  self.rId)
 
-        # TODO add error handling
-        self.r = requests.get(self.rId, headers=USER_AGENT)
+        try:
+            self.r = requests.get(self.rId, headers=USER_AGENT)
+            self.status = self.r.status_code
+        except requests.exceptions.RequestException as e:
+            lg.error(e)
+            self.status = 0
 
-        self.status = self.r.status_code
-        if self.status is 100:  # TODO Add more codes
+        if self.status is 200:
             self.ok = True
         else:
             self.ok = False
