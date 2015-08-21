@@ -45,3 +45,6 @@ class help(object):
 
     def bottom(self):
         pass
+
+    def describe(self):
+        return "HELP"

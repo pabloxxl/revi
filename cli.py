@@ -7,6 +7,7 @@ from reddit.comments import comments
 from reddit.error import error
 from help import help
 from globals import mode
+from history import history
 import logging as lg
 
 
@@ -31,14 +32,15 @@ class window:
                  str(self.MAX_LIST_ITEMS))
         self.MODE = mode.VIM
 
+        self.history = history()
+
         self.drawLoading()
 
         l = listing("", rLimit=self.MAX_LIST_ITEMS)
         if l.ok:
-            self.currObject = l
-            self.clear()
+            self.setCurrentObject(l)
         else:
-            self.currObject = error(l.status)
+            self.setCurrentObject(error(l.status))
 
         if self.MODE is mode.VIM:
             self.eval = eval_vim(self.stdscr)
@@ -96,7 +98,7 @@ class window:
         lg.debug("cli::drawError")
         self.clear()
         self.stdscr.addstr(0, 0, "ERROR")
-        self.stdscr.addstr(1, 0, self.currObject.describe())
+        self.stdscr.addstr(1, 0, self.currObject.str())
 
     def drawLoading(self):
         """Print loading screen"""
@@ -186,8 +188,7 @@ class window:
 
     def performHelp(self):
         """Enter help"""
-        self.clear()
-        self.currObject = help()
+        self.setCurrentObject(help())
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
@@ -197,11 +198,22 @@ class window:
 
         c = comments(link.addr, rLimit=100)
         if c.ok:
-            self.currObject = comments(link.addr, rLimit=100)
+            self.setCurrentObject(c)
         else:
-            self.currObject = error(c.status)
+            self.setCurrentObject(error(c.status))
 
         self.clear()
+
+    def setCurrentObject(self, currObject):
+        """
+        Set current object, used for printing end evaluating commands.
+        Arguments:
+            currObject(rObject): reddit object
+        """
+        self.clear()
+        self.currObject = currObject
+        self.history.add(currObject)
+        self.history.update()
 
     def run(self):
         """

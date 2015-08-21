@@ -14,6 +14,7 @@ class user(rObject):
         lg.debug("user::__init__ " +
                  uName)
 
+        self.uName = uName
         rTxtOverview = 'user/'+uName+'/overview/'
         self.rOverview = request(rTxtOverview)
 
@@ -21,3 +22,7 @@ class user(rObject):
         """Dump request object"""
         lg.debug("user::dump")
         self.rOverview.dump()
+
+    def describe(self):
+        """Print user description"""
+        return "USER: " + self.uName

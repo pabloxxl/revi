@@ -21,7 +21,6 @@ parser.add_argument("-d", "--debug",
                     action="store_true")
 
 args = parser.parse_args()
-DEBUG = None
 if args.debug:
     logging.basicConfig(format='%(levelname)s:%(message)s',
                         level=logging.DEBUG,
@@ -29,7 +28,7 @@ if args.debug:
 
 else:
     logging.basicConfig(format='%(levelname)s:%(message)s',
-                        level=logging.WARNING,
+                        level=logging.INFO,
                         filename=LOGNAME)
 
 logging.getLogger("requests").setLevel(logging.WARNING)

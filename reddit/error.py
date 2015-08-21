@@ -35,10 +35,14 @@ class error(rObject):
     def bottom(self):
         lg.debug("error::bottom")
 
+    def describe(self):
+        """Print error  description"""
+        return "ERROR: " + str(self.code)
+
     def dump(self):
         lg.debug("error::dump")
 
-    def describe(self):
+    def str(self):
         """ Return string describing error"""
         desc = mapping_error.get(self.code, "OTHER REASON")
 

@@ -28,6 +28,10 @@ class comments(rObject):
                  rTypeTxt + " " +
                  str(rLimit))
 
+        # TODO strip rlink to show in history
+        self.rLink = rLink
+        self.rType = rType
+
         self.currComment = 0
 
         rLimitTxt = None
@@ -95,6 +99,10 @@ class comments(rObject):
     def getNumberOfComments(self):
         """Get lenght of comment list"""
         return len(self.comments)
+
+    def describe(self):
+        """Print comments description"""
+        return "COMMENTS: " + self.rLink + "(" + typeStr(self.rType) + ")"
 
     def dump(self):
         """Dump request object"""

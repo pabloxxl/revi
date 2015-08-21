@@ -27,6 +27,12 @@ class listing(rObject):
                  rTypeTxt + " " +
                  str(rLimit))
 
+        self.rName = rName
+        self.rType = rType
+
+        if self.rName == "":
+            self.rName = "front"
+
         self.currLine = 0
         rLimitTxt = None
         if rLimit is not 25:
@@ -94,6 +100,10 @@ class listing(rObject):
                  len(self.links) - 1)
 
         self.currLine = len(self.links) - 1
+
+    def describe(self):
+        """Print listing description"""
+        return "LISTING: " + self.rName + "(" + typeStr(self.rType) + ")"
 
     def dump(self):
         """Dump request object"""

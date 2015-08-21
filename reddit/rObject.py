@@ -47,3 +47,7 @@ class rObject(object):
 
     def bottom(self):
         lg.debug("rObject::bottom")
+
+    def decribe(self):
+        lg.debug("rObject::describe")
+        return "rObject. This should not happen"
