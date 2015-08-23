@@ -4,10 +4,12 @@ from cli import window
 import argparse
 import time
 import logging
+import ConfigParser
+import os
 
 VERSION = "0.1"
 LOGNAME = "revi.log"
-CONFIG = "~/revirc"
+CONFIG = "~/.revirc"
 
 
 def parse():
@@ -58,17 +60,30 @@ def readConfig():
     Return:
         (dict): Parsed options
     """
-    pass
+    config = ConfigParser.ConfigParser()
+    ret = config.read(os.path.expanduser(CONFIG))
+    if len(ret) is 0:
+        return None
+    cd = {}
+    if config.has_option(None, "user"):
+        cd['user'] = config.get("DEFAULT", "user")
+    # Worst idea EVER
+    if config.has_option(None, "password"):
+        cd['password'] = config.get("DEFAULT", "password")
+    return cd
 
 if __name__ == "__main__":
     # Run main loop
     args = parse()
     setLogger(args.debug)
+    config = readConfig()
+    if config is None:
+        print ".revirc not found. Assuming defaults"
 
     if args.cli:
         w = window()
         w.run()
-        print "TERMINATED"
+        print "Revi finished normally"
     else:
         print "GTK version is not supported yet"
 else:
