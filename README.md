@@ -8,8 +8,12 @@ It can be operated with normal (emacs-like) or vi key mappings. Vi mode is a sug
 #WHAT WORKS
 * Displaying main page
 * Displaying comments page
-* VIM : switching modes 
+* Switching comments
+* Recording history
+* VIM : switching modes, basic movement
 * Logging
+* Login via app is being worked on
+* Help page
 
 #DEMO
 ![Alt text](/example.gif?raw=true "Example")
