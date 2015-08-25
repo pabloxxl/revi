@@ -15,8 +15,10 @@ class window:
     """
     Representation of main window of client
     Creating this object will init curses screen and set it to defaults
+    Arguments:
+        config(dictionary): set of options read from config file
     """
-    def __init__(self):
+    def __init__(self, config):
         lg.debug("cli::__init__")
         self.stdscr = curses.initscr()
         curses.noecho()
@@ -32,7 +34,8 @@ class window:
                  str(self.MAX_LIST_ITEMS))
         self.MODE = mode.VIM
 
-        self.history = history()
+        hm = config.get("history_max", 5)
+        self.history = history(hm)
 
         self.drawLoading()
 

@@ -1,23 +1,24 @@
 import logging as lg
 
-HISTORY_COUNT = 5  # Read it from config
-
 
 class history:
     """
     Holder of history - last used reddit objects
+    Arguments:
+        max(int): maximum ammount of saved history
     """
-    def __init__(self):
-        lg.debug("history::__init__")
+    def __init__(self, max):
+        lg.debug("history::__init__ " + str(max))
+        self.max = max
         self.history_list = []
 
     def update(self):
         """
-        Check if length of history_list is bigger than HISTORY_COUNT.
+        Check if length of history_list is bigger than max.
         If so, remove oldest element
         """
         lg.debug("history::update")
-        if len(self.history_list) > HISTORY_COUNT:
+        if len(self.history_list) > max:
             self.history_list.pop()
 
     def add(self, currObject):

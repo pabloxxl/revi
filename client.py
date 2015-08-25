@@ -70,6 +70,9 @@ def readConfig():
     # Worst idea EVER
     if config.has_option(None, "password"):
         cd['password'] = config.get("DEFAULT", "password")
+
+    if config.has_option(None, "history_max"):
+        cd['history_max'] = config.get("DEFAULT", "history_max")
     return cd
 
 if __name__ == "__main__":
@@ -81,7 +84,7 @@ if __name__ == "__main__":
         print ".revirc not found. Assuming defaults"
 
     if args.cli:
-        w = window()
+        w = window(config)
         w.run()
         print "Revi finished normally"
     else:
