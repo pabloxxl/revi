@@ -37,6 +37,8 @@ class window:
         hm = config.get("history_max", 5)
         self.history = history(hm)
 
+        self.currObject = None
+
         self.drawLoading()
 
         l = listing("", rLimit=self.MAX_LIST_ITEMS)
@@ -171,6 +173,7 @@ class window:
             cmd.UP: self.currObject.decrement,
             cmd.TOP: self.currObject.top,
             cmd.BOTTOM: self.currObject.bottom,
+            cmd.BACK: self.performBack,
             cmd.ENTER: self.performEnter
         }
 
@@ -188,6 +191,15 @@ class window:
         if currObjectType == "listing":
             self.drawLoading()
             self.followCurrent()
+
+    def performBack(self):
+        """Interpret BACK key"""
+        hist = self.history.get()
+        if hist is not None:
+            self.clear()
+            self.currObject = hist
+        else:
+            lg.warning("Trying to go back, but history is empty!")
 
     def performHelp(self):
         """Enter help"""
@@ -214,9 +226,10 @@ class window:
             currObject(rObject): reddit object
         """
         self.clear()
+        if self.currObject is not None:
+            self.history.add(self.currObject)
+            self.history.update()
         self.currObject = currObject
-        self.history.add(currObject)
-        self.history.update()
 
     def run(self):
         """
