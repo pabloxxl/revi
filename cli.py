@@ -39,6 +39,10 @@ class window:
 
         self.currObject = None
 
+        self.msg = None
+        self.setMsg("Revi started, config loaded from file, "
+                    "word peace achieved")
+
         self.drawLoading()
 
         l = listing("", rLimit=self.MAX_LIST_ITEMS)
@@ -54,6 +58,14 @@ class window:
             pass
 
         self.help = help()
+
+    def drawStatus(self):
+        """Draw statusline"""
+        lg.debug("cli::drawStatus")
+        if self.msg is not None:
+            self.stdscr.addstr(self.maxY - 2, 0, self.msg, curses.A_STANDOUT)
+        else:
+            self.stdscr.addstr(self.maxY - 2, 0, " "*(self.maxX - 1))
 
     def drawListing(self):
         """Draw list of links"""
@@ -149,6 +161,7 @@ class window:
             self.drawError()
 
         self.drawEval()
+        self.drawStatus()
         self.stdscr.refresh()
 
     def clear(self):
@@ -164,6 +177,8 @@ class window:
         """
         lg.debug("cli::processCmd " +
                  str(self.cmd))
+
+        self.clearMsg()
 
         # This should be more global. Dunno how to do that.
         mapping_cli = {
@@ -191,9 +206,12 @@ class window:
         if currObjectType == "listing":
             self.drawLoading()
             self.followCurrent()
+            self.setMsg(str(self.currObject.getNumberOfComments()) +
+                        " comments loaded")
 
     def performBack(self):
         """Interpret BACK key"""
+        self.setMsg("Back")
         hist = self.history.get()
         if hist is not None:
             self.clear()
@@ -230,6 +248,18 @@ class window:
             self.history.add(self.currObject)
             self.history.update()
         self.currObject = currObject
+
+    def setMsg(self, msg):
+        """
+        Set msg to show in status line
+        Arguments:
+            msg(string): text to show
+        """
+        self.msg = msg
+
+    def clearMsg(self):
+        """Clear msg to show in status line"""
+        self.msg = None
 
     def run(self):
         """
