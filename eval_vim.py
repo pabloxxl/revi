@@ -132,7 +132,4 @@ class eval_vim(eval):
         if self.mode is mode.COMMAND:
             self.stdscr.addstr(maxY-1, 0, ":"+self.text)
         elif self.mode is mode.NORMAL:
-            # XXX I'm sure there is other method to do it...
-            # I should add cleared bool also
-            for i in range(maxX-1):
-                self.stdscr.addstr(maxY-1, i, " ")
+            self.stdscr.addstr(maxY-1, 0,  " "*(maxX - 1))
