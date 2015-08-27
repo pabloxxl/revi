@@ -63,7 +63,7 @@ def readConfig():
     config = ConfigParser.ConfigParser()
     ret = config.read(os.path.expanduser(CONFIG))
     if len(ret) is 0:
-        return None
+        return {}
     cd = {}
     if config.has_option(None, "user"):
         cd['user'] = config.get("DEFAULT", "user")
