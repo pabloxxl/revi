@@ -10,6 +10,11 @@ from globals import mode
 from history import history
 import logging as lg
 
+BORDER_SIGN = "="
+BORDER_SIGN_V = "|"
+
+BOTTOM_OFFSET = 3
+
 
 class window:
     """
@@ -28,7 +33,7 @@ class window:
 
         self.maxY, self.maxX = self.stdscr.getmaxyx()
 
-        self.MAX_LIST_ITEMS = self.maxY - 3
+        self.MAX_LIST_ITEMS = self.maxY - BOTTOM_OFFSET - 2
 
         lg.debug("Maximum number for items is " +
                  str(self.MAX_LIST_ITEMS))
@@ -59,6 +64,20 @@ class window:
 
         self.help = help()
 
+    def drawBorder(self):
+        """Draw border"""
+        lg.debug("cli::drawBorder")
+        # TODO fetch version and name from variable
+        title = "[[REVI v0.1]]"
+        upper_border = BORDER_SIGN*(self.maxX - len(title) - 5) + title + 5*BORDER_SIGN
+        bottom_border = BORDER_SIGN*(self.maxX)
+
+        self.stdscr.addstr(0, 0, upper_border)
+        self.stdscr.addstr(self.maxY - BOTTOM_OFFSET, 0, bottom_border)
+        for i in range(1, self.maxY - BOTTOM_OFFSET):
+            self.stdscr.addstr(i, 0, BORDER_SIGN_V)
+            self.stdscr.addstr(i, self.maxX - 1, BORDER_SIGN_V)
+
     def drawStatus(self):
         """Draw statusline"""
         lg.debug("cli::drawStatus")
@@ -71,39 +90,41 @@ class window:
         """Draw list of links"""
         lg.debug("cli::drawListing")
         # Should change to subredit title
-        self.stdscr.addstr(0, 0, "FRONTPAGE:")
-        for i, link in enumerate(self.currObject.links, start=1):
-            if i > self.MAX_LIST_ITEMS:
+        self.stdscr.addstr(1, 1, "FRONTPAGE:")
+        for i, link in enumerate(self.currObject.links, start=2):
+            # This surely does nothing...
+            # or does it? Have to check
+            if i > self.MAX_LIST_ITEMS + 2:
                 lg.warning("Reached end of screen with links " +
                            "left to draw (" +
                            str(len(self.currObject.links)-i) + ")")
                 break
-            if i is self.currObject.currLine+1:
-                for j in range(self.maxX-1):
+            if i is self.currObject.currLine+2:
+                for j in range(1, self.maxX-1):
                     self.stdscr.addstr(i, j, " ",
                                        curses.A_REVERSE)
 
-                self.stdscr.addstr(i, 0, link.title.encode('utf-8'),
+                self.stdscr.addstr(i, 1, link.title.encode('utf-8'),
                                    curses.A_REVERSE)
             else:
-                for j in range(self.maxX-1):
+                for j in range(1, self.maxX-1):
                     self.stdscr.addstr(i, j, " ")
-                self.stdscr.addstr(i, 0, link.title.encode('utf-8'))
+                self.stdscr.addstr(i, 1, link.title.encode('utf-8'))
 
     def drawComments(self):
         """Draw list of comments"""
         lg.debug("cli::drawComments")
         self.clear()  # I should consider not clearing here
 
-        self.stdscr.addstr(0, 0, "COMMENTS(" +
+        self.stdscr.addstr(1, 1, "COMMENTS(" +
                            str(self.currObject.getCurrentCommentNumber()) +
                            "/" + str(self.currObject.getNumberOfComments()) +
                            "):")
         comment = self.currObject.getCurrentComment()
-        self.stdscr.addstr(2, 0, comment.author.encode('utf-8') +
+        self.stdscr.addstr(3, 1, comment.author.encode('utf-8') +
                            ": ", curses.A_BOLD)
 
-        self.stdscr.addstr(3, 0, comment.text.encode('utf-8'))
+        self.stdscr.addstr(4, 1, comment.text.encode('utf-8'))
 
     def drawEval(self):
         """Draw object specific to eval objects (key mappings)"""
@@ -121,6 +142,7 @@ class window:
         """Print loading screen"""
         lg.debug("cli::drawLoading")
         self.clear()
+        self.drawBorder()
         self.stdscr.addstr(self.maxY/2, self.maxX/2, "PLEASE STAND BY")
         self.stdscr.refresh()
 
@@ -129,20 +151,20 @@ class window:
         lg.debug("cli::drawLoading with mode: "+str(self.MODE))
 
         if self.MODE is mode.VIM:
-            self.stdscr.addstr(0, 0, "HELP:")
-            self.stdscr.addstr(2, 0, "VIM command mode bindings:",
+            self.stdscr.addstr(0, 1, "HELP:")
+            self.stdscr.addstr(2, 1, "VIM command mode bindings:",
                                curses.A_BOLD)
             line = 3
             for key, val in self.help.vim_command:
-                self.stdscr.addstr(line, 0, key + " : " + val)
+                self.stdscr.addstr(line, 1, key + " : " + val)
                 line += 1
 
             line += 1
-            self.stdscr.addstr(line, 0, "VIM normal mode bindings:",
+            self.stdscr.addstr(line, 1, "VIM normal mode bindings:",
                                curses.A_BOLD)
             line += 1
             for item in self.help.vim_normal:
-                self.stdscr.addstr(line, 0, item[0] + " : " + item[1])
+                self.stdscr.addstr(line, 1, item[0] + " : " + item[1])
                 line += 1
 
     def draw(self):
@@ -160,6 +182,7 @@ class window:
         elif currObjectType == "error":
             self.drawError()
 
+        self.drawBorder()
         self.drawEval()
         self.drawStatus()
         self.stdscr.refresh()
