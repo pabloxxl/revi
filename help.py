@@ -22,7 +22,7 @@ class help(object):
         ("G ", "Go to bottom"),
         ("gg", "Go to top"),
         ("ZZ", "Quit program"),
-        ("\\n", "Follow current link")
+        ("ENTER", "Follow current link")
     ]
 
     emacs = [
