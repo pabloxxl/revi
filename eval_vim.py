@@ -57,7 +57,8 @@ class eval_vim(eval):
                  text)
 
         self.mode = mode.NORMAL
-        return mapping_command.get(text, cmd.SWITCH_TO_NORMAL)
+        val = mapping_command.get(text, cmd.SWITCH_TO_NORMAL)
+        return cmd(val)
 
     def __evalNormal__(self, char, prevChar):
         """
@@ -73,11 +74,15 @@ class eval_vim(eval):
 
         if char is ':':
             self.mode = mode.COMMAND
+            val = mapping_normal[":"]
+            return cmd(val, "stub")
 
-        cmd = mapping_normal.get(char, None)
-        if cmd is None:
-            cmd = mapping_normal.get(prevChar + char)
-        return cmd
+        val = mapping_normal.get(char, None)
+        # Try parsing one letter
+        if val is None:
+            # Try parsing two letters
+            val = mapping_normal.get(prevChar + char)
+        return cmd(val)
 
     def eval(self):
         """
@@ -93,14 +98,14 @@ class eval_vim(eval):
             self.char = self.stdscr.getkey()
 
             val = self.__evalNormal__(self.char, self.prevChar)
-            if val is not None:
+            if val.id is not None:
                 self.reset()
             return val
 
         elif self.mode is mode.COMMAND:
             self.char = self.stdscr.getkey()
             if self.char == "\n":
-                val = self.cmd = self.__evalCommand__(self.text)
+                val = self.__evalCommand__(self.text)
                 self.reset()
             else:
                 self.text += self.char

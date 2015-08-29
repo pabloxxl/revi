@@ -69,11 +69,14 @@ class window:
         lg.debug("cli::drawBorder")
         # TODO fetch version and name from variable
         title = "[[REVI v0.1]]"
-        upper_border = BORDER_SIGN*(self.maxX - len(title) - 5) + title + 5*BORDER_SIGN
+        upper_border = BORDER_SIGN*(self.maxX - len(title) - 5) \
+            + title + 5*BORDER_SIGN
+
         bottom_border = BORDER_SIGN*(self.maxX)
 
         self.stdscr.addstr(0, 0, upper_border)
         self.stdscr.addstr(self.maxY - BOTTOM_OFFSET, 0, bottom_border)
+
         for i in range(1, self.maxY - BOTTOM_OFFSET):
             self.stdscr.addstr(i, 0, BORDER_SIGN_V)
             self.stdscr.addstr(i, self.maxX - 1, BORDER_SIGN_V)
@@ -199,7 +202,7 @@ class window:
             (bool): False if while loop has to exit. True otherwise
         """
         lg.debug("cli::processCmd " +
-                 str(self.cmd))
+                 str(self.cmd.id))
 
         self.clearMsg()
 
@@ -215,11 +218,11 @@ class window:
             cmd.ENTER: self.performEnter
         }
 
-        fun = mapping_cli.get(self.cmd, None)
+        fun = mapping_cli.get(self.cmd.id, None)
         if fun is not None:
             fun()
 
-        if self.cmd is cmd.QUIT:
+        if self.cmd.id is cmd.QUIT:
             return False
         return True
 
