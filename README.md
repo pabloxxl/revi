@@ -3,13 +3,13 @@
 This repository contains  **revi** (**re**ddit-**vi**), terminal reddit client.
 It can be operated with normal (emacs-like) or vi key mappings. Vi mode is a sugested one.
 
-**Revi** does not support images or videos. Redirecting to web browser or showing images in console will be developed in the future.
+**Revi** does not support images or videos. Opening external link redirects to default browser.
 
 #WHAT WORKS
 * Displaying main page
 * Displaying comments page
 * Switching comments
-* Recording history
+* Recording history, undo movement
 * VIM : switching modes, basic movement
 * Logging
 * Login via app is being worked on
