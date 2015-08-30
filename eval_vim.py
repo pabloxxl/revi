@@ -9,6 +9,7 @@ mapping_normal = {
     "j": cmd.DOWN,
     "k": cmd.UP,
     "b": cmd.BACK,
+    "e": cmd.ENTER_EXTERNAL,
     "B": cmd.BACK_ABSOLUTE,
     "G": cmd.BOTTOM,
     "ZZ": cmd.QUIT,

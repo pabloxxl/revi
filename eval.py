@@ -8,6 +8,7 @@ class cmd:
     SWITCH_TO_COMMAND = 2  # params: p
     SWITCH_TO_INSERT = 3
     ENTER = 4  # params: p1, p2
+    ENTER_EXTERNAL = 5
     DOWN = 20
     UP = 21
     TOP = 22

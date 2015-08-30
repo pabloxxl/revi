@@ -3,9 +3,10 @@
 from cli import window
 import argparse
 import time
-import logging
+import logging as lg
 import ConfigParser
 import os
+import sys
 
 VERSION = "0.1"
 LOGNAME = "revi.log"
@@ -38,20 +39,20 @@ def setLogger(debug):
         debug(bool): Should debug printouts be visible
     """
     if debug:
-        logging.basicConfig(format='%(levelname)s:%(message)s',
-                            level=logging.DEBUG,
-                            filename=LOGNAME)
+        lg.basicConfig(format='%(levelname)s:%(message)s',
+                       level=lg.DEBUG,
+                       filename=LOGNAME)
 
     else:
-        logging.basicConfig(format='%(levelname)s:%(message)s',
-                            level=logging.INFO,
-                            filename=LOGNAME)
+        lg.basicConfig(format='%(levelname)s:%(message)s',
+                       level=lg.INFO,
+                       filename=LOGNAME)
 
     # Do not print requests module logs
-    logging.getLogger("requests").setLevel(logging.WARNING)
+    lg.getLogger("requests").setLevel(lg.WARNING)
 
-    logging.info("revi v"+VERSION)
-    logging.info(time.strftime("Log started at %H:%M:%S (%d.%m.%Y)"))
+    lg.info("revi v"+VERSION)
+    lg.info(time.strftime("Log started at %H:%M:%S (%d.%m.%Y)"))
 
 
 def readConfig():
@@ -60,19 +61,30 @@ def readConfig():
     Return:
         (dict): Parsed options
     """
+    cd = {}
     config = ConfigParser.ConfigParser()
     ret = config.read(os.path.expanduser(CONFIG))
+
+    # Read system specific options
+    if sys.platform == "darwin":
+        lg.info("OS X detected. Setting browser: safari")
+        cd["browser"] = "open -a safari"
+    else:
+        lg.info("Unknown system version")
+
+    # Check if config file was found
     if len(ret) is 0:
-        return {}
-    cd = {}
+        lg.info("Config file not found!")
+        return cd
+
     if config.has_option(None, "user"):
         cd['user'] = config.get("DEFAULT", "user")
-    # Worst idea EVER
-    if config.has_option(None, "password"):
-        cd['password'] = config.get("DEFAULT", "password")
+        lg.info("cd[user]: " + cd['user'])
 
     if config.has_option(None, "history_max"):
         cd['history_max'] = config.get("DEFAULT", "history_max")
+        lg.info("cd[history_max]: " + cd['history_max'])
+
     return cd
 
 if __name__ == "__main__":

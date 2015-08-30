@@ -10,6 +10,7 @@ class link:
     def __init__(self, title, addr):
         self.title = title
         self.addr = addr
+        self.url = None
         # lg.debug("link::__init__ "+title[:10].encode('utf8')+"...")
 
 
@@ -116,4 +117,5 @@ class listing(rObject):
         self.links = []
         for child in self.json['data']['children']:
             l = link(child['data']['title'], child['data']['permalink'])
+            l.url = child['data'].get("url", None)
             self.links.append(l)

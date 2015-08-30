@@ -9,6 +9,7 @@ from help import help
 from globals import mode
 from history import history
 import logging as lg
+import os
 
 BORDER_SIGN = "="
 BORDER_SIGN_V = "|"
@@ -40,6 +41,8 @@ class window:
         self.MODE = mode.VIM
 
         hm = config.get("history_max", 5)
+
+        self.browser = config.get("browser", None)
         self.history = history(hm)
 
         self.currObject = None
@@ -215,7 +218,8 @@ class window:
             cmd.TOP: self.currObject.top,
             cmd.BOTTOM: self.currObject.bottom,
             cmd.BACK: self.performBack,
-            cmd.ENTER: self.performEnter
+            cmd.ENTER: self.performEnter,
+            cmd.ENTER_EXTERNAL: self.performExternalEnter
         }
 
         fun = mapping_cli.get(self.cmd.id, None)
@@ -234,6 +238,14 @@ class window:
             self.followCurrent()
             self.setMsg(str(self.currObject.getNumberOfComments()) +
                         " comments loaded")
+
+    def performExternalEnter(self):
+        if self.browser is None:
+            lg.warning("Tried to open external link without browser set!")
+        else:
+            link = self.currObject.getLink(self.currObject.currLine)
+            os.system("%s %s" % (self.browser, link.url))
+            self.setMsg("Link loaded externaly")
 
     def performBack(self):
         """Interpret BACK key"""
