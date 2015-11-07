@@ -38,6 +38,9 @@ def setLogger(debug):
     Arguments:
         debug(bool): Should debug printouts be visible
     """
+    # Remove old log file
+    if os.path.isfile(LOGNAME):
+      os.remove(LOGNAME)
     if debug:
         lg.basicConfig(format='%(levelname)s:%(message)s',
                        level=lg.DEBUG,
