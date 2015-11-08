@@ -11,7 +11,7 @@ from history import history
 import logging as lg
 import os
 
-BORDER_SIGN = "="
+BORDER_SIGN = "-"
 BORDER_SIGN_V = "|"
 
 BOTTOM_OFFSET = 3
@@ -26,6 +26,7 @@ class window:
     """
     def __init__(self, config):
         lg.debug("cli::__init__")
+        lg.info("Creating CLI instance")
         self.stdscr = curses.initscr()
         curses.noecho()
         curses.cbreak()
@@ -36,11 +37,13 @@ class window:
 
         self.MAX_LIST_ITEMS = self.maxY - BOTTOM_OFFSET - 2
 
-        lg.debug("Maximum number for items is " +
+        lg.info("Maximum number for items is " +
                  str(self.MAX_LIST_ITEMS))
         self.MODE = mode.VIM
+        lg.info("Current mode is %s",self.MODE)
 
         hm = config.get("history_max", 5)
+        lg.info("History max is %s",hm)
 
         self.browser = config.get("browser", None)
         self.history = history(hm)
@@ -318,6 +321,7 @@ class window:
         This method will be automaticaly called by class destructor
         """
         lg.debug("cli::close")
+        lg.info("Closing CLI instance")
         curses.nocbreak()
         curses.echo()
         self.stdscr.keypad(0)

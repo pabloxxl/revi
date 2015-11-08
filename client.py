@@ -77,7 +77,7 @@ def readConfig():
 
     # Check if config file was found
     if len(ret) is 0:
-        lg.info("Config file not found!")
+        lg.warning("Config file not found!")
         return cd
 
     if config.has_option(None, "user"):
@@ -103,6 +103,7 @@ if __name__ == "__main__":
         w.run()
         print "Revi finished normally"
     else:
+        lg.error("GTK version is not supported yet. Exiting")
         print "GTK version is not supported yet"
 else:
     print "Library mode is not implemented"

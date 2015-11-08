@@ -59,6 +59,7 @@ class eval_vim(eval):
 
         self.mode = mode.NORMAL
         val = mapping_command.get(text, cmd.SWITCH_TO_NORMAL)
+        #XXX Add opening subreddit, :e <param>
         return cmd(val)
 
     def __evalNormal__(self, char, prevChar):

@@ -8,7 +8,7 @@ mapping_error = {
     404: "PAGE NOT FOUND",
     500: "INTERNAL SERVER ERROR",
     503: "SERVICE UNAVAILABLE",
-    504: "GATEWAY TIMEOut"
+    504: "GATEWAY TIMEOUT"
 }
 
 

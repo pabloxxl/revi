@@ -17,3 +17,6 @@ It can be operated with normal (emacs-like) or vi key mappings. Vi mode is a sug
 
 #DEMO
 ![Alt text](/example.gif?raw=true "Example")
+
+#TODO
+* Mono / Color setting
