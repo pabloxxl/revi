@@ -41,7 +41,7 @@ class eval_vim(eval):
         stdscr(stdscr): instance of curses window
     """
     def __init__(self, stdscr):
-        lg.debug("eval_vim::__init__")
+        lg.debug("")
         self.mode = mode.NORMAL
         self.reset()
         self.stdscr = stdscr
@@ -54,8 +54,7 @@ class eval_vim(eval):
         Returns:
             (cmd): command object. SWITCH_TO_NORMAL if no command was found
         """
-        lg.debug("eval_vim::__evalCommand__ " +
-                 text)
+        lg.debug("%s",text)
 
         self.mode = mode.NORMAL
         val = mapping_command.get(text, cmd.SWITCH_TO_NORMAL)
@@ -71,8 +70,7 @@ class eval_vim(eval):
         Returns:
             (cmd): command object. None if no command was found
         """
-        lg.debug("eval_vim::__evalNormal__ " +
-                 prevChar + char)
+        lg.debug("%s %s", prevChar, char)
 
         if char is ':':
             self.mode = mode.COMMAND
@@ -92,7 +90,7 @@ class eval_vim(eval):
         Returns:
             (cmd): command object
         """
-        lg.debug("eval_vim::eval")
+        lg.debug("")
         val = None
         # Gather input
         if self.mode is mode.NORMAL:
@@ -115,7 +113,7 @@ class eval_vim(eval):
 
     def reset(self):
         """Resets all stored values"""
-        lg.debug("eval_vim::reset")
+        lg.debug("")
         self.char = ''
         self.prevChar = ''
         self.text = ""
@@ -127,7 +125,7 @@ class eval_vim(eval):
             maxY(int): window height
             maxX(int): windows width
         """
-        lg.debug("eval_vim::draw")
+        lg.debug("")
         self.__drawFooter__(maxY, maxX)
 
     def __drawFooter__(self, maxY, maxX):
@@ -135,7 +133,7 @@ class eval_vim(eval):
         Draw menu on the bottom of screen
         It is managed here since only eval_vim know about current mode
         """
-        lg.debug("eval_vim::__drawFooter__")
+        lg.debug("")
         if self.mode is mode.COMMAND:
             self.stdscr.addstr(maxY-1, 0, ":"+self.text)
         elif self.mode is mode.NORMAL:

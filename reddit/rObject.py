@@ -37,17 +37,17 @@ class rObject(object):
     Common ancestor for all reddit objects
     """
     def decrease(self):
-        lg.debug("rObject::decrease")
+        lg.debug("")
 
     def increase(self):
-        lg.debug("rObject::increase")
+        lg.debug("")
 
     def top(self):
-        lg.debug("rObject::top")
+        lg.debug("")
 
     def bottom(self):
-        lg.debug("rObject::bottom")
+        lg.debug("")
 
     def decribe(self):
-        lg.debug("rObject::describe")
+        lg.debug("")
         return "rObject. This should not happen"

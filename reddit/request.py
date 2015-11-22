@@ -27,32 +27,31 @@ class request:
         if rParams is not None:
             self.rId += "?"+rParams
 
-        lg.debug("request::__init__ " +
-                 self.rId)
+        lg.debug("%d", self.rId)
 
         try:
             self.r = requests.get(self.rId, headers=USER_AGENT)
             self.status = self.r.status_code
         except requests.exceptions.RequestException as e:
-            lg.error(e)
+            lg.error("Request error: %s", e)
             self.status = 0
 
+        lg.debug("%d", self.status)
         if self.status is 200:
             self.ok = True
         else:
             self.ok = False
-            lg.warning("Request returned " + str(self.status))
 
         if self.ok:
             self.json = self.r.json()
 
     def dump(self):
         """Dump request and all children"""
-        lg.debug("request::dump")
+        lg.debug("")
 
         if self.ok:
             data = self.r.json()
-            lg.debug("Dumping: " + self.rId)
+            lg.debug("Dumping: %d", self.id)
             lg.debug(DD)
             lg.debug(data)
             lg.debug(DD)
@@ -62,7 +61,6 @@ class request:
                     lg.debug(child)
             else:
                 lg.debug("Failed to dump data")
-
             lg.debug(DD)
         else:
-            lg.debug("Return code:" + str(self.status))
+          lg.debug("Return code: %d", self.status)

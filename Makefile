@@ -3,3 +3,4 @@ install:
 clean:
 	rm -f revi.log
 	rm -f ~/revi.rc
+	git clean -dfx

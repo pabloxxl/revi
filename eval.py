@@ -28,12 +28,12 @@ class cmd:
         Arguments:
             id(int)[cmd.NONE]: command numeric value
         """
-        lg.debug("cmd::__init " + str(id))
+        lg.debug("%d ", id)
         self.id = id
         self.args = args
         if args is not None:
             for i, arg in enumerate(args):
-                lg.debug("p[" + str(i) + "]: " + arg)
+                lg.debug("p[%d]: %s",i , arg)
 
 
 class eval(object):
@@ -45,4 +45,4 @@ class eval(object):
             maxY(int): window height
             maxX(int): windows width
         """
-        lg.debug("eval::draw")
+        lg.debug("")

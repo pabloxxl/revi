@@ -20,27 +20,26 @@ class error(rObject):
     """
     def __init__(self, code=0):
         self.code = code
-        lg.debug("error::__init__ " +
-                 str(self.code))
+        lg.debug("%d", self.code)
 
     def decrement(self):
-        lg.debug("error::decrement")
+        lg.debug("")
 
     def increment(self):
-        lg.debug("error::increment")
+        lg.debug("")
 
     def top(self):
-        lg.debug("error::top")
+        lg.debug("")
 
     def bottom(self):
-        lg.debug("error::bottom")
+        lg.debug("")
 
     def describe(self):
         """Print error  description"""
         return "ERROR: " + str(self.code)
 
     def dump(self):
-        lg.debug("error::dump")
+        lg.debug("")
 
     def str(self):
         """ Return string describing error"""

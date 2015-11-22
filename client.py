@@ -41,20 +41,23 @@ def setLogger(debug):
     # Remove old log file
     if os.path.isfile(LOGNAME):
       os.remove(LOGNAME)
+
+    f='[%(levelname)s] %(module)s::%(funcName)s:%(lineno)s %(message)s'
+
     if debug:
-        lg.basicConfig(format='%(levelname)s:%(message)s',
+      lg.basicConfig(format='[%(levelname)s][%(asctime)s] %(module)s::%(funcName)s:%(lineno)s %(message)s',
                        level=lg.DEBUG,
                        filename=LOGNAME)
 
     else:
-        lg.basicConfig(format='%(levelname)s:%(message)s',
+      lg.basicConfig(format='[%(levelname)s][%(asctime)s] %(message)s',
                        level=lg.INFO,
                        filename=LOGNAME)
 
     # Do not print requests module logs
     lg.getLogger("requests").setLevel(lg.WARNING)
 
-    lg.info("revi v"+VERSION)
+    lg.info("revi v%d", VERSION)
     lg.info(time.strftime("Log started at %H:%M:%S (%d.%m.%Y)"))
 
 
@@ -82,11 +85,11 @@ def readConfig():
 
     if config.has_option(None, "user"):
         cd['user'] = config.get("DEFAULT", "user")
-        lg.info("cd[user]: " + cd['user'])
+        lg.info("cd[user]: %s", cd['user'])
 
     if config.has_option(None, "history_max"):
         cd['history_max'] = config.get("DEFAULT", "history_max")
-        lg.info("cd[history_max]: " + cd['history_max'])
+        lg.info("cd[history_max]: %s", cd['history_max'])
 
     return cd
 

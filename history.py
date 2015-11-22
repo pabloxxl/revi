@@ -8,7 +8,7 @@ class history:
         max(int): maximum ammount of saved history
     """
     def __init__(self, max):
-        lg.debug("history::__init__ " + str(max))
+        lg.debug("%d", max)
         self.max = max
         self.history_list = []
 
@@ -17,7 +17,7 @@ class history:
         Check if length of history_list is bigger than max.
         If so, remove oldest element
         """
-        lg.debug("history::update")
+        lg.debug("")
         if len(self.history_list) > max:
             lg.debug("Removing oldest element from history list")
             self.history_list.pop()
@@ -28,15 +28,15 @@ class history:
         Arguments:
             currObject(rObject): reddit object
         """
-        lg.debug("history::add " + currObject.describe())
+        lg.debug("%s", currObject.describe())
         self.history_list.append(currObject)
 
     def get(self):
         """ Get youngest element, remove it and return """
-        lg.debug("history::get")
+        lg.debug("")
         if len(self.history_list) > 0:
             hist = self.history_list.pop()
-            lg.debug("Poping from history " + hist.describe())
+            lg.debug("%s", hist.describe())
             return hist
         else:
             return None

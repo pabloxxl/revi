@@ -25,7 +25,7 @@ class window:
         config(dictionary): set of options read from config file
     """
     def __init__(self, config):
-        lg.debug("cli::__init__")
+        lg.debug("")
         lg.info("Creating CLI instance")
         self.stdscr = curses.initscr()
         curses.noecho()
@@ -37,13 +37,12 @@ class window:
 
         self.MAX_LIST_ITEMS = self.maxY - BOTTOM_OFFSET - 2
 
-        lg.info("Maximum number for items is " +
-                 str(self.MAX_LIST_ITEMS))
+        lg.info("Maximum number for items is %s", self.MAX_LIST_ITEMS)
         self.MODE = mode.VIM
         lg.info("Current mode is %s",self.MODE)
 
         hm = config.get("history_max", 5)
-        lg.info("History max is %s",hm)
+        lg.info("History max is %s", hm)
 
         self.browser = config.get("browser", None)
         self.history = history(hm)
@@ -72,7 +71,7 @@ class window:
 
     def drawBorder(self):
         """Draw border"""
-        lg.debug("cli::drawBorder")
+        lg.debug("")
         # TODO fetch version and name from variable
         title = "[[REVI v0.1]]"
         upper_border = BORDER_SIGN*(self.maxX - len(title) - 5) \
@@ -89,7 +88,7 @@ class window:
 
     def drawStatus(self):
         """Draw statusline"""
-        lg.debug("cli::drawStatus")
+        lg.debug("")
         if self.msg is not None:
             self.stdscr.addstr(self.maxY - 2, 0, self.msg, curses.A_STANDOUT)
         else:
@@ -97,16 +96,15 @@ class window:
 
     def drawListing(self):
         """Draw list of links"""
-        lg.debug("cli::drawListing")
+        lg.debug("")
         # Should change to subredit title
         self.stdscr.addstr(1, 1, "FRONTPAGE:")
         for i, link in enumerate(self.currObject.links, start=2):
             # This surely does nothing...
             # or does it? Have to check
             if i > self.MAX_LIST_ITEMS + 2:
-                lg.warning("Reached end of screen with links " +
-                           "left to draw (" +
-                           str(len(self.currObject.links)-i) + ")")
+                lg.warning("Reached end of screen with links to draw (%d)",
+                           len(self.currObject.links)-i)
                 break
             if i is self.currObject.currLine+2:
                 for j in range(1, self.maxX-1):
@@ -122,7 +120,7 @@ class window:
 
     def drawComments(self):
         """Draw list of comments"""
-        lg.debug("cli::drawComments")
+        lg.debug("")
         self.clear()  # I should consider not clearing here
 
         self.stdscr.addstr(1, 1, "COMMENTS(" +
@@ -137,19 +135,19 @@ class window:
 
     def drawEval(self):
         """Draw object specific to eval objects (key mappings)"""
-        lg.debug("cli::drawEval")
+        lg.debug("")
         self.eval.draw(self.maxY, self.maxX)
 
     def drawError(self):
         """Print error text"""
-        lg.debug("cli::drawError")
+        lg.debug("")
         self.clear()
         self.stdscr.addstr(0, 0, "ERROR")
         self.stdscr.addstr(1, 0, self.currObject.str())
 
     def drawLoading(self):
         """Print loading screen"""
-        lg.debug("cli::drawLoading")
+        lg.debug("")
         self.clear()
         self.drawBorder()
         self.stdscr.addstr(self.maxY/2, self.maxX/2, "PLEASE STAND BY")
@@ -157,7 +155,7 @@ class window:
 
     def drawHelp(self):
         """Print help screen dependant on mode"""
-        lg.debug("cli::drawLoading with mode: "+str(self.MODE))
+        lg.debug("with mode: %d", self.MODE)
 
         if self.MODE is mode.VIM:
             self.stdscr.addstr(0, 1, "HELP:")
@@ -178,7 +176,7 @@ class window:
 
     def draw(self):
         """(Re)draws entire screen"""
-        lg.debug("cli::draw")
+        lg.debug("")
         # XXX Error handling???
 
         currObjectType = type(self.currObject).__name__
@@ -198,7 +196,7 @@ class window:
 
     def clear(self):
         """Clear entire screen"""
-        lg.debug("cli::clear")
+        lg.debug("")
         self.stdscr.clear()
 
     def processCmd(self):
@@ -207,8 +205,7 @@ class window:
         Returns:
             (bool): False if while loop has to exit. True otherwise
         """
-        lg.debug("cli::processCmd " +
-                 str(self.cmd.id))
+        lg.debug("%d", self.cmd.id)
 
         self.clearMsg()
 
@@ -266,8 +263,7 @@ class window:
 
     def followCurrent(self):
         """Fetches link  from current cmd and tries to follow it."""
-        lg.debug("cli::followCurrent " +
-                 str(self.currObject.currLine))
+        lg.debug("%d", self.currObject.currLine)
         link = self.currObject.getLink(self.currObject.currLine)
 
         c = comments(link.addr, rLimit=100)
@@ -307,7 +303,7 @@ class window:
         Enter infinite loop, catch keys and process them.
         If eval object returns something other than None, process cmd object
         """
-        lg.debug("cli::run")
+        lg.debug("")
         while(True):
             self.draw()
             self.cmd = self.eval.eval()
@@ -320,7 +316,7 @@ class window:
         Clean-up and close curses window.
         This method will be automaticaly called by class destructor
         """
-        lg.debug("cli::close")
+        lg.debug("")
         lg.info("Closing CLI instance")
         curses.nocbreak()
         curses.echo()
